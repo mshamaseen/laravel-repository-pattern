@@ -16,7 +16,7 @@ class RepositoryGenerator extends Command
      *
      * @var string
      */
-    protected $signature = 'repository:generator
+    protected $signature = 'make:repository
     {name : Class (singular) for example User}';
 
     /**
