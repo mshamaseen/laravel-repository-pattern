@@ -92,6 +92,7 @@ class CrudGenerator extends Command
 
         $path = $this->FolderOrNew(app_path('/Http/Controllers/' . $pluralName) . "/");
         file_put_contents($path . "{$name}Controller.php", $controllerTemplate);
+
     }
 
     protected function request($name)
@@ -111,6 +112,7 @@ class CrudGenerator extends Command
 
         $path = $this->FolderOrNew(app_path("/Http/Requests/{$pluralName}") . "/");
         file_put_contents($path . "{$name}Request.php", $template);
+
     }
 
     protected function interface($name)
@@ -130,6 +132,7 @@ class CrudGenerator extends Command
 
         $path = $this->FolderOrNew(app_path("/Interfaces/{$pluralName}") . "/");
         file_put_contents($path . "{$name}Interface.php", $template);
+
     }
 
     protected function repository($name)
@@ -149,10 +152,12 @@ class CrudGenerator extends Command
 
         $path = $this->FolderOrNew(app_path("/Repositories/{$pluralName}") . "/");
         file_put_contents($path . "{$name}Repository.php", $template);
+
     }
 
     function FolderOrNew($path)
     {
+
         if (!file_exists($path)) {
             mkdir($path, 0777, true);
         }
@@ -171,5 +176,6 @@ class CrudGenerator extends Command
         $appServerProvider = preg_replace("/;([^;]+)$/", $replaceWith, $appServerProvider);
 
         file_put_contents(app_path('Providers/AppServiceProvider.php'), $appServerProvider);
+
     }
 }
