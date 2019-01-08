@@ -1,6 +1,6 @@
 <?php
 
-namespace Shamaseen\RepositoryGenerateor\Commands;
+namespace Shamaseen\Repository\Generator\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -53,7 +53,7 @@ class CrudGenerator extends Command
 
     protected function getStub($type)
     {
-        return file_get_contents(resource_path("stubs/$type.stub"));
+        return file_get_contents("../stubs/$type.stub");
     }
 
     protected function model($name)
@@ -162,20 +162,5 @@ class CrudGenerator extends Command
             mkdir($path, 0777, true);
         }
         return $path;
-    }
-
-    function appendToAppServiceProvider($name)
-    {
-        $pluralName = str_plural($name);
-        $appServerProvider = file_get_contents(app_path('Providers/AppServiceProvider.php'));
-
-        $replaceWith = ";\n\nuse App\Interfaces\\" . $pluralName . "\\" . $name . "Interface;\nuse App\Repositories\\" . $pluralName . "\\" . $name . "Repository;\n";
-        $appServerProvider = substr_replace($appServerProvider, $replaceWith, strpos($appServerProvider, ';'), 1);;
-
-        $replaceWith = ";\n        " . '$this->app->bind(' . $name . 'Interface::class , ' . $name . 'Repository::class); $1';
-        $appServerProvider = preg_replace("/;([^;]+)$/", $replaceWith, $appServerProvider);
-
-        file_put_contents(app_path('Providers/AppServiceProvider.php'), $appServerProvider);
-
     }
 }

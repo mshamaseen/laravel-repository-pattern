@@ -1,8 +1,9 @@
 <?php
 
-namespace Shamaseen\Repository\Generateor;
+namespace Shamaseen\Repository\Generator;
 
 use Illuminate\Support\ServiceProvider;
+use Shamaseen\Repository\Generator\Commands\CrudGenerator;
 
 class GeneratorServiceProvider extends ServiceProvider
 {
@@ -13,6 +14,11 @@ class GeneratorServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                CrudGenerator::class
+            ]);
+        }
 //        $this->loadRoutesFrom(__DIR__.'/routes.php');
 //        $this->loadMigrationsFrom(__DIR__.'/migrations');
 //        $this->loadViewsFrom(__DIR__.'/views', 'todolist');
