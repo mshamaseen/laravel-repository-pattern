@@ -13,7 +13,6 @@
             "email": "developerh108@gmail.com"
         }
     ],
-
     "extra": {
         "laravel": {
             "providers": [
@@ -30,5 +29,6 @@
 
     "minimum-stability": "stable",
     "prefer-stable": true,
+
     "require": {}
 }
