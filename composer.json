@@ -27,9 +27,7 @@
         }
     },
 
-    "minimum-stability": "dev",
+    "minimum-stability": "stability",
     "prefer-stable": true,
-    "require": {
-        "laravelcollective/html": "^5.5"
-    }
+    "require": {}
 }
