@@ -47,7 +47,7 @@ class CrudGenerator extends Command
         $this->repository($name);
         $this->interface($name);
 
-        File::append(base_path('routes/web.php'), "\n".'Route::resource(\'' . str_plural($name) . "', '{$name}Controller');");
+        File::append(base_path('routes/web.php'), "\n" . 'Route::resource(\'' . str_plural($name) . "', '{$name}Controller');");
 
     }
 
@@ -71,8 +71,8 @@ class CrudGenerator extends Command
             $this->getStub('Model')
         );
 
-        $path = $this->FolderOrNew(app_path('Entities/'.$pluralName)."/");
-        file_put_contents($path."{$name}.php", $modelTemplate);
+        $path = $this->FolderOrNew(app_path('Entities/' . $pluralName) . "/");
+        file_put_contents($path . "{$name}.php", $modelTemplate);
     }
 
     protected function controller($name)
@@ -90,8 +90,8 @@ class CrudGenerator extends Command
             $this->getStub('Controller')
         );
 
-        $path = $this->FolderOrNew(app_path('/Http/Controllers/'.$pluralName)."/");
-        file_put_contents($path."{$name}Controller.php", $controllerTemplate);
+        $path = $this->FolderOrNew(app_path('/Http/Controllers/' . $pluralName) . "/");
+        file_put_contents($path . "{$name}Controller.php", $controllerTemplate);
     }
 
     protected function request($name)
@@ -109,8 +109,8 @@ class CrudGenerator extends Command
             $this->getStub('Request')
         );
 
-        $path = $this->FolderOrNew(app_path("/Http/Requests/{$pluralName}")."/");
-        file_put_contents($path."{$name}Request.php", $template);
+        $path = $this->FolderOrNew(app_path("/Http/Requests/{$pluralName}") . "/");
+        file_put_contents($path . "{$name}Request.php", $template);
     }
 
     protected function interface($name)
@@ -128,8 +128,8 @@ class CrudGenerator extends Command
             $this->getStub('Interface')
         );
 
-        $path = $this->FolderOrNew(app_path("/Interfaces/{$pluralName}")."/");
-        file_put_contents($path."{$name}Interface.php", $template);
+        $path = $this->FolderOrNew(app_path("/Interfaces/{$pluralName}") . "/");
+        file_put_contents($path . "{$name}Interface.php", $template);
     }
 
     protected function repository($name)
@@ -147,15 +147,14 @@ class CrudGenerator extends Command
             $this->getStub('Repository')
         );
 
-        $path = $this->FolderOrNew(app_path("/Repositories/{$pluralName}")."/");
-        file_put_contents($path."{$name}Repository.php", $template);
+        $path = $this->FolderOrNew(app_path("/Repositories/{$pluralName}") . "/");
+        file_put_contents($path . "{$name}Repository.php", $template);
     }
 
     function FolderOrNew($path)
     {
-        if(!file_exists($path))
-        {
-            mkdir($path,0777,true);
+        if (!file_exists($path)) {
+            mkdir($path, 0777, true);
         }
         return $path;
     }
@@ -165,12 +164,12 @@ class CrudGenerator extends Command
         $pluralName = str_plural($name);
         $appServerProvider = file_get_contents(app_path('Providers/AppServiceProvider.php'));
 
-        $replaceWith = ";\n\nuse App\Interfaces\\".$pluralName."\\".$name."Interface;\nuse App\Repositories\\".$pluralName."\\".$name."Repository;\n";
+        $replaceWith = ";\n\nuse App\Interfaces\\" . $pluralName . "\\" . $name . "Interface;\nuse App\Repositories\\" . $pluralName . "\\" . $name . "Repository;\n";
         $appServerProvider = substr_replace($appServerProvider, $replaceWith, strpos($appServerProvider, ';'), 1);;
 
-        $replaceWith = ";\n        ".'$this->app->bind('.$name.'Interface::class , '.$name.'Repository::class); $1';
+        $replaceWith = ";\n        " . '$this->app->bind(' . $name . 'Interface::class , ' . $name . 'Repository::class); $1';
         $appServerProvider = preg_replace("/;([^;]+)$/", $replaceWith, $appServerProvider);
 
-        file_put_contents(app_path('Providers/AppServiceProvider.php'),$appServerProvider);
+        file_put_contents(app_path('Providers/AppServiceProvider.php'), $appServerProvider);
     }
 }
