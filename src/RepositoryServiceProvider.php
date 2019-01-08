@@ -14,7 +14,7 @@ class RepositoryServiceProvider extends ServiceProvider
      *
      * @var bool
      */
-//    protected $defer = true;
+    protected $defer = true;
 
     /**
      * All of the container bindings that should be registered.

@@ -3,8 +3,13 @@
 namespace Shamaseen\Repository\Generator;
 
 use Illuminate\Support\ServiceProvider;
-use Shamaseen\Repository\Generator\Commands\CrudGenerator;
 
+use Shamaseen\Repository\Generator\Commands\RepositoryGenerator;
+
+/**
+ * Class GeneratorServiceProvider
+ * @package Shamaseen\Repository\Generator
+ */
 class GeneratorServiceProvider extends ServiceProvider
 {
     /**
@@ -16,16 +21,9 @@ class GeneratorServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                CrudGenerator::class
+                RepositoryGenerator::class
             ]);
         }
-//        $this->loadRoutesFrom(__DIR__.'/routes.php');
-//        $this->loadMigrationsFrom(__DIR__.'/migrations');
-//        $this->loadViewsFrom(__DIR__.'/views', 'todolist');
-//        $this->publishes([
-//            __DIR__.'/views' => base_path('resources/views/wisdmlabs/todolist'),
-//        ]);
-
     }
 
     /**
