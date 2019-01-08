@@ -1,0 +1,10 @@
+<?php
+
+namespace App\Entities\{{modelNamePlural}};
+
+use App\Entities\BaseEntity;
+
+class {{modelName}} extends BaseEntity
+{
+    protected $guarded = [];
+}

@@ -1,0 +1,33 @@
+{
+    "name": "shamaseen/repository-generator",
+    "description": "repository pattern files generator",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mohammad Shamaseen",
+            "email": "m.shamaseen@outlook.com"
+        },
+        {
+            "name": "Hamza Alayed",
+            "email": "developerh108@gmail.com"
+        }
+    ],
+
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Shamaseen\\Repository\\Generator\\GeneratorServiceProvider"
+            ]
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Shamaseen\\Repository\\Generator\\": "src/"
+        }
+    },
+
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require": {}
+}
