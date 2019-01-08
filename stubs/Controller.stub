@@ -1,0 +1,99 @@
+<?php
+
+namespace App\Http\Controllers\{{modelNamePlural}};
+
+use App\Http\Requests\{{modelNamePlural}}\{{modelName}}Request;
+use App\Http\Controllers\BaseController;
+use App\Interfaces\{{modelNamePlural}}\{{modelName}}Interface;
+use Illuminate\Http\Request;
+
+class {{modelName}}Controller extends BaseController
+{
+
+    /**
+     * {{modelName}}Controller constructor.
+     * @param {{modelName}}Interface $interface
+     * @param {{modelName}}Request $request
+     */
+    public function __construct({{modelName}}Interface $interface, Request $request)
+    {
+        parent::__construct($interface, $request);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        return parent::index($request);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        return parent::create();
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param {{modelName}}Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store({{modelName}}Request $request)
+    {
+        return parent::baseStore($request);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        return parent::show($id);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        return parent::edit($id);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param {{modelName}}Request $request
+     * @param  int $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function update({{modelName}}Request $request, $id)
+    {
+        return parent::baseUpdate($request,$id);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy($id)
+    {
+        return parent::destroy($id);
+    }
+}

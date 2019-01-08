@@ -1,0 +1,11 @@
+<?php
+
+namespace App\Interfaces\{{modelNamePlural}};
+
+
+use App\Interfaces\EloquentInterface;
+
+interface {{modelName}}Interface extends EloquentInterface
+{
+
+}
