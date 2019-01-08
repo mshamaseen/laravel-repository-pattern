@@ -1,6 +1,6 @@
 {
     "name": "shamaseen/repository-generator",
-    "description": "",
+    "description": "repository pattern files generator",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -13,7 +13,23 @@
             "email": "developerh108@gmail.com"
         }
     ],
+
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Shamaseen\\RepositoryGenerator\\RepositoryServiceProvider"
+            ]
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Shamaseen\\RepositoryGenerator\\": "src/"
+        }
+    },
+
     "minimum-stability": "dev",
     "prefer-stable": true,
-    "require": {}
+    "require": {
+        "laravelcollective/html": "^5.5"
+    }
 }
