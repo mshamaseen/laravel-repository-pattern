@@ -55,7 +55,7 @@ class RepositoryGenerator extends Command
         $this->creator($name, $path, "Interfaces/", 'Interface');
         $this->creator($name, $path, "Repositories/", 'Repository');
 
-        File::append(base_path('routes/web.php'), "\n" . 'Route::resource(\'' . str_plural($name) . "', '{$name}Controller');");
+        File::append(__DIR__.'../../../../routes/web.php', "\n" . 'Route::resource(\'' . str_plural($name) . "', '{$name}Controller');");
 
     }
 
