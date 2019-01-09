@@ -101,7 +101,7 @@ class RepositoryGenerator extends Command
      * @param string $path class path
      * @return string
      */
-    function checkFolder($path)
+    public function checkFolder($path)
     {
 
         if (!file_exists($path)) {
