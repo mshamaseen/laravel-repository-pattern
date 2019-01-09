@@ -43,7 +43,7 @@ class RepositoryGenerator extends Command
      */
     public function handle()
     {
-        $file = explode("/", $this->argument('name'));
+        $file = explode("/", (string)$this->argument('name'));
 
         $name = $file[count($file) - 1];
         unset($file[count($file) - 1]);
@@ -91,7 +91,7 @@ class RepositoryGenerator extends Command
             $this->getStub($type)
         );
 
-        $path = $this->checkFolder(app_path("{$folder}{$path}/"));
+        $path = $this->checkFolder(__DIR__."../../../../app/{$folder}{$path}/");
         file_put_contents($path . "{$name}{$type}.php", $template);
 
     }
