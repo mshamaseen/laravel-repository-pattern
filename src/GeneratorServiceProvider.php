@@ -24,6 +24,10 @@ class GeneratorServiceProvider extends ServiceProvider
                 RepositoryGenerator::class
             ]);
         }
+        $this->publishes([
+            __DIR__.'/config' => realpath(__DIR__.'/../../../../../config'),
+            __DIR__.'/stubs' => \Config::get('repository.resources_path')."stubs/",
+        ]);
     }
 
     /**

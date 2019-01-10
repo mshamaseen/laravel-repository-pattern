@@ -31,22 +31,6 @@ class RepositoryServiceProvider extends ServiceProvider
     public function __construct($app)
     {
         parent::__construct($app);
-        $contractsFolder = realpath(__DIR__.'../../../../app/Contracts');
-        $Directory = new \RecursiveDirectoryIterator($contractsFolder);
-        $Iterator = new \RecursiveIteratorIterator($Directory);
-        $Regex = new \RegexIterator($Iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
-        foreach ($Regex as $name => $value) {
-
-            if (strpos($name, 'BaseContract') === false) {
-                $contract = explode('app/', $name);
-                $contract = explode('.php', $contract[1]);
-                $contractName = "App\\" . str_replace('/', '\\', $contract[0]);
-                $repository = str_replace('Contracts', 'Repositories', $contractName);
-                $repository = str_replace('Contract', 'Repository', $repository);
-                $this->providers[] = $contractName;
-                $this->bindings[$contractName] = $repository;
-            }
-        }
     }
 
     /**
