@@ -4,10 +4,10 @@ namespace App\Repositories\{{modelNamePlural}};
 
 use App\Entities\{{modelNamePlural}}\{{modelName}};
 use App\Interfaces\{{modelNamePlural}}\{{modelName}}Interface;
-use App\Repositories\Database;
+use Shamaseen\Repository\Generator\Bases\Repository;
 use Illuminate\Container\Container as App;
 
-class {{modelName}}Repository extends Database implements {{modelName}}Interface
+class {{modelName}}Repository extends Repository implements {{modelName}}Interface
 {
     protected $with = [];
 

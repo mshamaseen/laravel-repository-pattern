@@ -2,7 +2,7 @@
 
 namespace App\Entities\{{modelNamePlural}};
 
-use App\Entities\BaseEntity;
+use Shamaseen\Repository\Generator\Bases\Entity;
 
 class {{modelName}} extends BaseEntity
 {

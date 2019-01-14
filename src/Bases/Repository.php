@@ -6,12 +6,11 @@
  * Time: 9:38 AM.
  */
 
-namespace App\Repositories;
+namespace Shamaseen\Repository\Generator\Bases;
 
-use App\Entities\Entity;
+
 use Illuminate\Container\Container as App;
 use Illuminate\Database\Eloquent\Builder;
-use Shamaseen\Repository\Generator\Bases\Contract;
 
 /**
  * Class Database.

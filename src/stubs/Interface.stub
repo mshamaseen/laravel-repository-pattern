@@ -3,9 +3,9 @@
 namespace App\Interfaces\{{modelNamePlural}};
 
 
-use App\Interfaces\EloquentInterface;
+use Shamaseen\Repository\Generator\Bases\Contract;
 
-interface {{modelName}}Interface extends EloquentInterface
+interface {{modelName}}Interface extends Contract
 {
 
 }

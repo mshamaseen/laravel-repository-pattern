@@ -6,8 +6,9 @@ use App\Http\Requests\{{modelNamePlural}}\{{modelName}}Request;
 use App\Http\Controllers\BaseController;
 use App\Interfaces\{{modelNamePlural}}\{{modelName}}Interface;
 use Illuminate\Http\Request;
+use Shamaseen\Repository\Generator\Bases\Controller;
 
-class {{modelName}}Controller extends BaseController
+class {{modelName}}Controller extends Controller
 {
 
     /**

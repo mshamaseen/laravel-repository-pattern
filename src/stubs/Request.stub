@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\{{modelNamePlural}};
 
-use App\Http\Requests\BaseRequests;
+use Shamaseen\Repository\Generator\Bases\Requests;
 
 class {{modelName}}Request extends BaseRequests
 {
