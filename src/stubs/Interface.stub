@@ -4,7 +4,10 @@ namespace App\Interfaces\{{modelNamePlural}};
 
 
 use Shamaseen\Repository\Generator\Bases\Contract;
-
+/**
+ * Interface {{modelName}}Interface
+ * @package App\Interfaces\{{modelNamePlural}}
+ */
 interface {{modelName}}Interface extends Contract
 {
 

@@ -2,22 +2,29 @@
 
 namespace App\Repositories\{{modelNamePlural}};
 
-use App\Entities\{{modelNamePlural}}\{{modelName}};
+use App\Entities\{{modelNamePlural}}\{{modelName}}Entity;
 use App\Interfaces\{{modelNamePlural}}\{{modelName}}Interface;
 use Shamaseen\Repository\Generator\Bases\Repository;
 use Illuminate\Container\Container as App;
-
+/**
+ * Class {{modelName}}Repository
+ * @package App\Repositories\{{modelNamePlural}}
+ */
 class {{modelName}}Repository extends Repository implements {{modelName}}Interface
 {
     protected $with = [];
-
+    /**
+     * @param App $app
+     */
     public function __construct(App $app)
     {
         parent::__construct($app);
     }
-
+    /**
+     * @return string
+     */
     protected function getModelClass(): string
     {
-        return {{modelName}}::class;
+        return {{modelName}}Entity::class;
     }
 }

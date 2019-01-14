@@ -26,9 +26,10 @@ class GeneratorServiceProvider extends ServiceProvider
         }
 
         $this->publishes([
-            __DIR__.'/config' => realpath(__DIR__.'/../../../../config'),
+            __DIR__.'/config' => realpath('config'),
         ],'repository-config');
-        $this->mergeConfigFrom(__DIR__.'/../../../../config/repository.php', 'repository-generator');
+        
+        $this->mergeConfigFrom(__DIR__.'/config/repository.php', 'repository-generator');
         $this->publishes([
             __DIR__.'/stubs' => \Config::get('repository.resources_path',realpath(__DIR__.'/../../../../resources/'))."/stubs/",
         ],'repository-stub');

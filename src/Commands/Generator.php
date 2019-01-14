@@ -27,6 +27,19 @@ class Generator extends Command
     protected $description = 'Create repository generator';
 
     /**
+     * The repository name.
+     *
+     * @var string
+     */
+    protected $repoName;
+    /**
+     * The repository name space.
+     *
+     * @var string
+     */
+    protected $repoNamespace;
+
+    /**
      * Create a new command instance.
      *
      * @return void
@@ -43,17 +56,26 @@ class Generator extends Command
      */
     public function handle()
     {
+
         $file = explode("/", (string)$this->argument('name'));
 
-        $name = $file[count($file) - 1];
+        $this->repoName=$file[count($file) - 1];
         unset($file[count($file) - 1]);
         $path = implode("/", $file);
 
-        $this->generate($name, $path, \Config::get('repository.controllers_path'), 'Controller');
-        $this->generate($name, $path, \Config::get('repository.models_path'), 'Model');
-        $this->generate($name, $path, \Config::get('repository.requests_path'), 'Request');
-        $this->generate($name, $path, \Config::get('repository.interfaces_path'), 'Interface');
-        $this->generate($name, $path, \Config::get('repository.repositories_path'), 'Repository');
+        if(count($file) == 0){
+            $this->repoNamespace=$this->repoName;
+        }else{
+            $name = $file[count($file) - 1];
+            $this->repoNamespace=implode("\\", $file);
+        }
+
+
+        $this->generate($path, \Config::get('repository.controllers_path'), 'Controller');
+        $this->generate($path, \Config::get('repository.models_path'), 'Entity');
+        $this->generate($path, \Config::get('repository.requests_path'), 'Request');
+        $this->generate($path, \Config::get('repository.interfaces_path'), 'Interface');
+        $this->generate($path, \Config::get('repository.repositories_path'), 'Repository');
 
         File::append(\Config::get('repository.route_path').'web.php', "\n" . 'Route::resource(\'' . str_plural($name) . "', '{$name}Controller');");
 
@@ -76,23 +98,22 @@ class Generator extends Command
      * @param string $folder default path to generate in
      * @param string $type define which kind of files should generate
      */
-    protected function generate($name, $path, $folder, $type)
+    protected function generate($path, $folder, $type)
     {
-        $namespace = str_replace("/", "\\", $path);
+
         $template = str_replace(
             [
                 '{{modelName}}',
                 "{{modelNamePlural}}"
             ],
             [
-                $name,
-                $namespace . "\\" . str_plural($name)
+                $this->repoName,
+                $this->repoNamespace
             ],
             $this->getStub($type)
         );
-
-        $path = $this->checkFolder(\Config::get('repository.app_path').$folder.$path."/");
-        file_put_contents($path . "{$name}{$type}.php", $template);
+        $path = $this->checkFolder(\Config::get('repository.app_path').'/'.$folder.$path."/");
+        file_put_contents($path . "{$this->repoName}{$type}.php", $template);
 
     }
 

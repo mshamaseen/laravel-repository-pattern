@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\{{modelNamePlural}};
 
 use App\Http\Requests\{{modelNamePlural}}\{{modelName}}Request;
-use App\Http\Controllers\BaseController;
 use App\Interfaces\{{modelNamePlural}}\{{modelName}}Interface;
-use Illuminate\Http\Request;
 use Shamaseen\Repository\Generator\Bases\Controller;
-
+/**
+ * Class {{modelName}}Controller
+ * @package App\Http\Controllers\{{modelNamePlural}}
+ */
 class {{modelName}}Controller extends Controller
 {
 
@@ -16,7 +17,7 @@ class {{modelName}}Controller extends Controller
      * @param {{modelName}}Interface $interface
      * @param {{modelName}}Request $request
      */
-    public function __construct({{modelName}}Interface $interface, Request $request)
+    public function __construct({{modelName}}Interface $interface, {{modelName}}Request $request)
     {
         parent::__construct($interface, $request);
     }
@@ -24,12 +25,11 @@ class {{modelName}}Controller extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        return parent::index($request);
+        return parent::index();
     }
 
     /**
@@ -45,12 +45,11 @@ class {{modelName}}Controller extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param {{modelName}}Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store({{modelName}}Request $request)
+    public function store()
     {
-        return parent::baseStore($request);
+        return parent::baseStore();
     }
 
     /**
@@ -78,13 +77,12 @@ class {{modelName}}Controller extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param {{modelName}}Request $request
      * @param  int $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update({{modelName}}Request $request, $id)
+    public function update($id)
     {
-        return parent::baseUpdate($request,$id);
+        return parent::baseUpdate($id);
     }
 
     /**

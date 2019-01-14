@@ -11,10 +11,10 @@ return [
     'resources_path' => realpath('resources/'),
 
     //relative to app path
-    'interfaces_path' => 'Interfaces/',
-    'models_path' => 'Entities/',
-    'controllers_path' => 'Http/Controllers/',
-    'repositories_path' => 'Repositories/',
-    'requests_path' => 'Http/Requests/',
+    'interfaces_path' => '/Interfaces/',
+    'models_path' => '/Entities/',
+    'controllers_path' => '/Http/Controllers/',
+    'repositories_path' => '/Repositories/',
+    'requests_path' => '/Http/Requests/',
 
 ];

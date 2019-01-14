@@ -3,8 +3,11 @@
 namespace App\Entities\{{modelNamePlural}};
 
 use Shamaseen\Repository\Generator\Bases\Entity;
-
-class {{modelName}} extends BaseEntity
+/**
+ * Class {{modelName}}
+ * @package App\Entities\Contents
+ */
+class {{modelName}}Entity extends Entity
 {
     protected $guarded = [];
 }
