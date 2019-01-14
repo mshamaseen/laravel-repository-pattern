@@ -30,7 +30,7 @@ class Entity extends Eloquent
 {
 
 
-    protected $searchable = [];
+    public $searchable = [];
     protected $dates = [
         'created_at',
         'updated_at',

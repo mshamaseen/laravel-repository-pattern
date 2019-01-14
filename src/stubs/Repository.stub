@@ -4,13 +4,13 @@ namespace App\Repositories\{{modelNamePlural}};
 
 use App\Entities\{{modelNamePlural}}\{{modelName}}Entity;
 use App\Interfaces\{{modelNamePlural}}\{{modelName}}Interface;
-use Shamaseen\Repository\Generator\Bases\Repository;
+use Shamaseen\Repository\Generator\Bases\AbstractRepository;
 use Illuminate\Container\Container as App;
 /**
  * Class {{modelName}}Repository
  * @package App\Repositories\{{modelNamePlural}}
  */
-class {{modelName}}Repository extends Repository implements {{modelName}}Interface
+class {{modelName}}Repository extends AbstractRepository implements {{modelName}}Interface
 {
     protected $with = [];
     /**

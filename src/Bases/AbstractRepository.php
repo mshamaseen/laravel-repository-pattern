@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 /**
  * Class Database.
  */
-abstract class Repository implements Contract
+abstract class AbstractRepository implements Contract
 {
     protected $with = [];
     /**
@@ -160,11 +160,7 @@ abstract class Repository implements Contract
     {
         $item = $this->model->where('id', $entityId);
 
-        if ($item && $item->delete()) {
-            return true;
-        }
-
-        return false;
+        return $item->delete();
     }
 
     /**
