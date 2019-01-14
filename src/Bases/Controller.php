@@ -36,7 +36,7 @@ class Controller extends \App\Http\Controllers\Controller
     protected $breadcrumbs;
 
     protected $menu;
-    protected $search = [];
+    protected $search ;
     protected $selectedMenu = [];
     protected $isAPI = false;
     protected $trash = false;
@@ -112,10 +112,7 @@ class Controller extends \App\Http\Controllers\Controller
             return view($this->viewIndex, $this->params)
                 ->with('entities', $data)
                 ->with('createRoute', $this->createRoute)
-                ->with('filters', $this->request->all())
-                ->with('activities', $this->interface->activities())
-                ->with('notes', $this->interface->notes())
-                ->with('files', $this->interface->files());
+                ->with('filters', $this->request->all());
         }
         if ($data->hasMorePages()) {
             return response()->json($data, JsonResponse::HTTP_PARTIAL_CONTENT);
@@ -197,10 +194,7 @@ class Controller extends \App\Http\Controllers\Controller
             ]);
 
             return view($this->viewShow, $this->params)
-                ->with('entity', $entity)
-                ->with('activities', $this->interface->activities($entityId))
-                ->with('notes', $this->interface->notes($entityId))
-                ->with('files', $this->interface->files($entityId));
+                ->with('entity', $entity);
         }
         if (!$entity) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
@@ -232,14 +226,7 @@ class Controller extends \App\Http\Controllers\Controller
             ]);
 
             return view($this->viewEdit, $this->params)
-                ->with('entity', $entity)
-                ->with('activities', $this->interface->activities($entityId))
-                ->with('notes', $this->interface->notes($entityId))
-                ->with('files', $this->interface->files($entityId))
-                ->with('uploadable_type', $this->interface->entityName())
-                ->with('uploadable_id', $entityId)
-                ->with('notable_type', $this->interface->entityName())
-                ->with('notable_id', $entityId);
+                ->with('entity', $entity);
         }
 
         return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
