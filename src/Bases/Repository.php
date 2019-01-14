@@ -8,18 +8,15 @@
 
 namespace App\Repositories;
 
-use App\Contracts\EloquentInterface;
-use App\Entities\BaseEntity;
-use App\Entities\Tools\FileEntity;
-use App\Entities\Tools\NoteEntity;
+use App\Entities\Entity;
 use Illuminate\Container\Container as App;
 use Illuminate\Database\Eloquent\Builder;
-use Spatie\Activitylog\Models\Activity;
+use Shamaseen\Repository\Generator\Bases\Contract;
 
 /**
  * Class Database.
  */
-abstract class Database implements EloquentInterface
+abstract class Repository implements Contract
 {
     protected $with = [];
     /**
@@ -32,21 +29,9 @@ abstract class Database implements EloquentInterface
 
     protected $direction = 'desc';
     /**
-     * @var BaseEntity
+     * @var Entity
      */
     protected $model;
-    /**
-     * @var \Eloquent
-     */
-    private $activity;
-    /**
-     * @var NoteEntity
-     */
-    private $note;
-    /**
-     * @var FileEntity
-     */
-    private $file;
     /**
      * @var boolean
      */
@@ -58,17 +43,11 @@ abstract class Database implements EloquentInterface
 
     /**
      * @param App $app
-     * @param Activity $activity
-     * @param NoteEntity $note
-     * @param FileEntity $file
      */
-    public function __construct(App $app, Activity $activity, NoteEntity $note, FileEntity $file)
+    public function __construct(App $app)
     {
         $this->app = $app;
         $this->makeModel();
-        $this->activity = $activity;
-        $this->note = $note;
-        $this->file = $file;
     }
 
     protected function makeModel()
@@ -94,7 +73,7 @@ abstract class Database implements EloquentInterface
 
     /**
      * @param array $filters
-     * @return BaseEntity
+     * @return Entity
      */
     public function filter($filters = [])
     {
@@ -108,7 +87,7 @@ abstract class Database implements EloquentInterface
             unset($filters['direction']);
         }
 
-        /** @var BaseEntity $latest */
+        /** @var Entity $latest */
         $latest = $this->model->with($this->with);
         if ('' != $this->order) {
             $latest->orderBy($this->order, $this->direction);
@@ -226,7 +205,7 @@ abstract class Database implements EloquentInterface
      * @param $entityId
      * @param array $columns
      *
-     * @return BaseEntity
+     * @return Entity
      */
     public function find($entityId = 0, $columns = ['*'])
     {
@@ -237,7 +216,7 @@ abstract class Database implements EloquentInterface
      * @param array $filter
      * @param array $columns
      *
-     * @return BaseEntity
+     * @return Entity
      */
     public function first($filter = [], $columns = ['*'])
     {
@@ -248,7 +227,7 @@ abstract class Database implements EloquentInterface
      * @param $haystack
      * @param $needle
      *
-     * @return BaseEntity[]|\Illuminate\Database\Eloquent\Collection
+     * @return Entity[]|\Illuminate\Database\Eloquent\Collection
      */
     public function search($haystack, $needle)
     {
@@ -260,7 +239,7 @@ abstract class Database implements EloquentInterface
      * @param $filters
      * @param array $columns
      *
-     * @return BaseEntity
+     * @return Entity
      */
     public function findBy($filters = [], $columns = ['*'])
     {
@@ -270,7 +249,7 @@ abstract class Database implements EloquentInterface
     /**
      * @param array $attributes
      *
-     * @return BaseEntity|\Illuminate\Database\Eloquent\Model
+     * @return Entity|\Illuminate\Database\Eloquent\Model
      */
     public function create($attributes = [])
     {
@@ -280,7 +259,7 @@ abstract class Database implements EloquentInterface
     /**
      * @param array $attributes
      *
-     * @return BaseEntity|\Illuminate\Database\Eloquent\Model
+     * @return Entity|\Illuminate\Database\Eloquent\Model
      */
     public function createOrUpdate($attributes = [])
     {
@@ -295,76 +274,6 @@ abstract class Database implements EloquentInterface
     public function createOrFirst($data = [])
     {
         return $this->model->firstOrCreate($data);
-    }
-
-    /**
-     * @param int $entityId
-     * @param int $perPage
-     *
-     * @param int $userId
-     * @return \Illuminate\Contracts\Pagination\Paginator
-     */
-    public function activities($entityId = 0, $perPage = 10, $userId = 0)
-    {
-        /** @var \Eloquent $activities */
-        $activities = $this->activity->where(
-            'subject_type',
-            $this->getModelClass()
-        )->orderBy('created_at', 'desc');
-
-        if (0 != $entityId) {
-            $activities->where('subject_id', $entityId);
-        }
-        if (0 != $userId) {
-            $activities->where('causer_id', $userId);
-        }
-
-        return $activities
-            ->simplePaginate($perPage, ['*'], 'activity_page');
-    }
-
-    /**
-     * @param int $entityId
-     * @param int $perPage
-     *
-     * @param int $userId
-     * @return \Illuminate\Contracts\Pagination\Paginator
-     */
-    public function notes($entityId = 0, $perPage = 10, $userId = 0)
-    {
-        $notes = $this->note->where('notable_type', $this->getModelClass())
-            ->orderBy('id', 'desc');
-        if (0 != $entityId) {
-            $notes->where('notable_id', $entityId);
-        }
-        if (0 != $userId) {
-            $notes->where('user_id', $userId);
-        }
-
-        return $notes
-            ->simplePaginate($perPage, ['*'], 'note_page');
-    }
-
-    /**
-     * @param int $entityId
-     * @param int $perPage
-     *
-     * @param int $userId
-     * @return \Illuminate\Contracts\Pagination\Paginator
-     */
-    public function files($entityId = 0, $perPage = 10, $userId = 0)
-    {
-        $files = $this->file->where('uploadable_type', $this->getModelClass())
-            ->orderBy('id', 'desc')
-            ->with('User');
-        if (0 != $entityId) {
-            $files->where('uploadable_id', $entityId);
-        }
-        if (0 != $userId) {
-            $files->where('user_id', $userId);
-        }
-
-        return $files->simplePaginate($perPage, ['*'], 'file_page');
     }
 
     /**
@@ -384,7 +293,7 @@ abstract class Database implements EloquentInterface
      */
     public function restore($entityId = 0)
     {
-        /** @var BaseEntity $entity */
+        /** @var Entity $entity */
         $entity = $this->model->withTrashed()
             ->whereId($entityId)
             ->first();
@@ -402,7 +311,7 @@ abstract class Database implements EloquentInterface
      */
     public function forceDelete($entityId = 0)
     {
-        /** @var BaseEntity $entity */
+        /** @var Entity $entity */
         $entity = $this->model->withTrashed()
             ->whereId($entityId)
             ->first();

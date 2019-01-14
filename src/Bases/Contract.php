@@ -6,7 +6,7 @@
  * Time: 9:38 AM.
  */
 
-namespace App\Contracts;
+namespace Shamaseen\Repository\Generator\Bases;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
@@ -14,7 +14,7 @@ use Illuminate\Pagination\Paginator;
 /**
  * Interface EloquentInterface.
  */
-interface EloquentInterface
+interface Contract
 {
     /**
      * @param array $columns
@@ -121,33 +121,6 @@ interface EloquentInterface
      * @return mixed
      */
     public function createOrUpdate($data = []);
-
-    /**
-     * @param int $entityId
-     * @param int $perPage
-     * @param int $userId
-     *
-     * @return mixed
-     */
-    public function notes($entityId = 0, $perPage = 10, $userId = 0);
-
-    /**
-     * @param int $entityId
-     * @param int $perPage
-     * @param int $userId
-     *
-     * @return mixed
-     */
-    public function files($entityId = 0, $perPage = 10, $userId = 0);
-
-    /**
-     * @param int $entityId
-     * @param int $perPage
-     * @param int $userId
-     *
-     * @return mixed
-     */
-    public function activities($entityId = 0, $perPage = 10, $userId = 0);
 
     /**
      * Get entity name

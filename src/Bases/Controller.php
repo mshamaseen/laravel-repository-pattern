@@ -6,9 +6,8 @@
  * Time: 9:53 AM.
  */
 
-namespace App\Http\Controllers;
+namespace Shamaseen\Repository\Generator\Bases;
 
-use App\Contracts\EloquentInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -16,10 +15,10 @@ use Illuminate\Support\Collection;
 /**
  * Class BaseController.
  */
-class BaseController extends Controller
+class Controller extends \App\Http\Controllers\Controller
 {
     /**
-     * @var EloquentInterface
+     * @var Contract
      */
     protected $interface;
 
@@ -42,14 +41,18 @@ class BaseController extends Controller
     protected $isAPI = false;
     protected $trash = false;
     protected $params = [];
+    /**
+     * @var Request
+     */
+    private $request;
 
     /**
      * BaseController constructor.
      *
-     * @param EloquentInterface $interface
-     * @param Request           $request
+     * @param Contract $interface
+     * @param Request  $request
      */
-    public function __construct(EloquentInterface $interface, Request $request)
+    public function __construct(Contract $interface, Request $request)
     {
         $this->menu = new Collection();
         $this->breadcrumbs = new Collection();
@@ -87,6 +90,7 @@ class BaseController extends Controller
             \View::share('search', $this->search);
             \View::share('selectedMenu', $this->selectedMenu);
         }
+        $this->request = $request;
     }
 
     /**
@@ -96,9 +100,9 @@ class BaseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $data = $this->interface->simplePaginate($this->limit, $request->all());
+        $data = $this->interface->simplePaginate($this->limit, $this->request->all());
         if (! $this->isAPI) {
             \View::share('pageTitle', 'List '.$this->pageTitle.' | '.\Config::get('app.name'));
             $this->breadcrumbs->put('index', [
@@ -109,7 +113,7 @@ class BaseController extends Controller
             return view($this->viewIndex, $this->params)
                 ->with('entities', $data)
                 ->with('createRoute', $this->createRoute)
-                ->with('filters', $request->all())
+                ->with('filters', $this->request->all())
                 ->with('activities', $this->interface->activities())
                 ->with('notes', $this->interface->notes())
                 ->with('files', $this->interface->files());
@@ -147,13 +151,11 @@ class BaseController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     *
      * @return \Illuminate\Http\RedirectResponse|mixed
      */
-    public function baseStore(Request $request)
+    public function baseStore()
     {
-        $entity = $this->interface->create($request->except(['_token', '_method']));
+        $entity = $this->interface->create($this->request->except(['_token', '_method']));
         if (! $this->isAPI) {
             if ($entity) {
                 return \Redirect::to($this->routeIndex)->with('message', __('messages.success'));
@@ -252,13 +254,13 @@ class BaseController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function baseUpdate($entityId, Request $request)
+    public function baseUpdate($entityId)
     {
         $entity = $this->interface->find($entityId);
         $saved = false;
 
         if ($entity) {
-            $saved = $this->interface->update($entityId, $request->except(['_token', '_method']));
+            $saved = $this->interface->update($entityId, $this->request->except(['_token', '_method']));
         }
 
         if (! $this->isAPI) {
