@@ -17,9 +17,6 @@ tools:
         enabled:              true
         config:
             standard:         PSR2
-        tests:
-            override:
-                use_website_config:  false
         filter:
             excluded_paths:
                 - 'vendor/*'
@@ -81,3 +78,6 @@ tools:
 
     # Security Advisory Checker
     sensiolabs_security_checker: true
+tests:
+    override:
+        use_website_config:  false
