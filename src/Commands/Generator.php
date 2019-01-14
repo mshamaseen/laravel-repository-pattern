@@ -42,7 +42,6 @@ class Generator extends Command
     /**
      * Create a new command instance.
      *
-     * @return void
      */
     public function __construct()
     {
@@ -52,22 +51,22 @@ class Generator extends Command
     /**
      * Execute the console command.
      *
-     * @return void
+
      */
     public function handle()
     {
 
         $file = explode("/", (string)$this->argument('name'));
 
-        $this->repoName=$file[count($file) - 1];
+        $this->repoName = $file[count($file) - 1];
         unset($file[count($file) - 1]);
         $path = implode("/", $file);
 
-        if(count($file) == 0){
-            $this->repoNamespace=$this->repoName;
-        }else{
-            $name = $file[count($file) - 1];
-            $this->repoNamespace=implode("\\", $file);
+        if (count($file) == 0) {
+            $this->repoNamespace = $this->repoName;
+        } else {
+            $this->repoNamespace = $file[count($file) - 1];
+            $this->repoNamespace = implode("\\", $file);
         }
 
 
@@ -77,23 +76,22 @@ class Generator extends Command
         $this->generate($path, \Config::get('repository.interfaces_path'), 'Interface');
         $this->generate($path, \Config::get('repository.repositories_path'), 'Repository');
 
-        File::append(\Config::get('repository.route_path').'web.php', "\n" . 'Route::resource(\'' . str_plural($name) . "', '{$name}Controller');");
+        File::append(\Config::get('repository.route_path') . 'web.php', "\n" . 'Route::resource(\'' . str_plural($this->repoName) . "', '{$this->repoName}Controller');");
 
     }
 
     /**
      * Get stub content to generate needed files
      *
-     * @param string $type  determine which stub should choose to get content
+     * @param string $type determine which stub should choose to get content
      * @return false|string
      */
     protected function getStub($type)
     {
-        return file_get_contents(\Config::get('repository.resources_path')."/stubs/$type.stub");
+        return file_get_contents(\Config::get('repository.resources_path') . "/stubs/$type.stub");
     }
 
     /**
-     * @param string $name Class name
      * @param string $path Class path
      * @param string $folder default path to generate in
      * @param string $type define which kind of files should generate
@@ -112,7 +110,7 @@ class Generator extends Command
             ],
             $this->getStub($type)
         );
-        $path = $this->checkFolder(\Config::get('repository.app_path').'/'.$folder.$path."/");
+        $path = $this->checkFolder(\Config::get('repository.app_path') . '/' . $folder . $path . "/");
         file_put_contents($path . "{$this->repoName}{$type}.php", $template);
 
     }
