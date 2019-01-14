@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: shanmaseen
  * Date: 10/01/19
- * Time: 09:58 ص
+ * Time: 09:58 am
  */
 return [
     'app_path' => realpath(__DIR__.'/../app/'),
