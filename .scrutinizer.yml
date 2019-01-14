@@ -17,7 +17,9 @@ tools:
         enabled:              true
         config:
             standard:         PSR2
-        use_website_config:  false
+        tests:
+            override:
+                use_website_config:  false
         filter:
             excluded_paths:
                 - 'vendor/*'
