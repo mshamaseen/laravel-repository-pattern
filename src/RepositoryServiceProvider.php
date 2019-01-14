@@ -31,11 +31,11 @@ class RepositoryServiceProvider extends ServiceProvider
     public function __construct($app)
     {
         parent::__construct($app);
-        $contractsFolder = realpath(__DIR__.'/../../../../app/Contracts');
-        $Directory = new \RecursiveDirectoryIterator($contractsFolder);
-        $Iterator = new \RecursiveIteratorIterator($Directory);
-        $Regex = new \RegexIterator($Iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
-        foreach ($Regex as $name => $value) {
+        $contractsFolder = realpath(__DIR__ . '/../../../../app/Contracts');
+        $directory = new \RecursiveDirectoryIterator($contractsFolder);
+        $iterator = new \RecursiveIteratorIterator($directory);
+        $regex = new \RegexIterator($iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
+        foreach ($regex as $name => $value) {
 
             if (strpos($name, 'BaseContract') === false) {
                 $contract = explode('app/', $name);
@@ -61,7 +61,6 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
     }
 
     /**

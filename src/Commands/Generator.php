@@ -110,8 +110,8 @@ class Generator extends Command
             ],
             $this->getStub($type)
         );
-        $path = $this->checkFolder(\Config::get('repository.app_path') . '/' . $folder . $path . "/");
-        file_put_contents($path . "{$this->repoName}{$type}.php", $template);
+        $filePath = $this->checkFolder(\Config::get('repository.app_path') . '/' . $folder . $path . "/");
+        file_put_contents($filePath . "{$this->repoName}{$type}.php", $template);
 
     }
 
