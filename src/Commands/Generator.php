@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\File;
  * Class RepositoryGenerator
  * @package Shamaseen\Repository\Generator\Commands
  */
-class RepositoryGenerator extends Command
+class Generator extends Command
 {
     /**
      * The name and signature of the console command.
@@ -49,11 +49,11 @@ class RepositoryGenerator extends Command
         unset($file[count($file) - 1]);
         $path = implode("/", $file);
 
-        $this->creator($name, $path, \Config::get('repository.controllers_path'), 'Controller');
-        $this->creator($name, $path, \Config::get('repository.models_path'), 'Model');
-        $this->creator($name, $path, \Config::get('repository.requests_path'), 'Request');
-        $this->creator($name, $path, \Config::get('repository.interfaces_path'), 'Interface');
-        $this->creator($name, $path, \Config::get('repository.repositories_path'), 'Repository');
+        $this->generate($name, $path, \Config::get('repository.controllers_path'), 'Controller');
+        $this->generate($name, $path, \Config::get('repository.models_path'), 'Model');
+        $this->generate($name, $path, \Config::get('repository.requests_path'), 'Request');
+        $this->generate($name, $path, \Config::get('repository.interfaces_path'), 'Interface');
+        $this->generate($name, $path, \Config::get('repository.repositories_path'), 'Repository');
 
         File::append(\Config::get('repository.route_path').'web.php', "\n" . 'Route::resource(\'' . str_plural($name) . "', '{$name}Controller');");
 
@@ -67,7 +67,7 @@ class RepositoryGenerator extends Command
      */
     protected function getStub($type)
     {
-        return file_get_contents(\Config::get('repository.resources_path')."stubs/$type.stub");
+        return file_get_contents(\Config::get('repository.resources_path')."/stubs/$type.stub");
     }
 
     /**
@@ -76,7 +76,7 @@ class RepositoryGenerator extends Command
      * @param string $folder default path to generate in
      * @param string $type define which kind of files should generate
      */
-    protected function creator($name, $path, $folder, $type)
+    protected function generate($name, $path, $folder, $type)
     {
         $namespace = str_replace("/", "\\", $path);
         $template = str_replace(

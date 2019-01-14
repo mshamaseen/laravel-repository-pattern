@@ -4,7 +4,7 @@ namespace Shamaseen\Repository\Generator;
 
 use Illuminate\Support\ServiceProvider;
 
-use Shamaseen\Repository\Generator\Commands\RepositoryGenerator;
+use Shamaseen\Repository\Generator\Commands\Generator;
 
 /**
  * Class GeneratorServiceProvider
@@ -21,13 +21,14 @@ class GeneratorServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                RepositoryGenerator::class
+                Generator::class
             ]);
         }
 
         $this->publishes([
             __DIR__.'/config' => realpath(__DIR__.'/../../../../config'),
         ],'repository-config');
+        $this->mergeConfigFrom(__DIR__.'/../../../../config/repository.php', 'repository-generator');
         $this->publishes([
             __DIR__.'/stubs' => \Config::get('repository.resources_path',realpath(__DIR__.'/../../../../resources/'))."/stubs/",
         ],'repository-stub');
