@@ -31,7 +31,7 @@ class RepositoryServiceProvider extends ServiceProvider
     public function __construct($app)
     {
         parent::__construct($app);
-        $contractsFolder = realpath(__DIR__.'../../../../app/Contracts');
+        $contractsFolder = realpath(__DIR__.'/../../../../app/Contracts');
         $Directory = new \RecursiveDirectoryIterator($contractsFolder);
         $Iterator = new \RecursiveIteratorIterator($Directory);
         $Regex = new \RegexIterator($Iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
