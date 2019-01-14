@@ -18,12 +18,7 @@
     Note that specifying any file or directory path
     on the command line will ignore all file tags.
     -->
-    <file>app</file>
-    <file>config</file>
-    <file>public</file>
-    <file>resources</file>
-    <file>routes</file>
-    <file>tests</file>
+    <file>src</file>
 
     <!--
        You can hard-code ignore patterns directly into your
@@ -32,6 +27,7 @@
 
     -->
     <exclude-pattern>*/database/*</exclude-pattern>
+    <exclude-pattern>*/src/stubs/*</exclude-pattern>
     <exclude-pattern>*/cache/*</exclude-pattern>
     <exclude-pattern>*/*.js</exclude-pattern>
     <exclude-pattern>*/*.css</exclude-pattern>
@@ -59,7 +55,7 @@
        You can hard-code custom php.ini settings into your custom standard.
        The following tag sets the memory limit to 64M.
     -->
-    <ini name="memory_limit" value="128M"/>
+    <ini name="memory_limit" value="1G"/>
 
     <!--
        Include all sniffs in the PEAR standard. Note that the
