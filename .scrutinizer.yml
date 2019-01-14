@@ -78,6 +78,16 @@ tools:
 
     # Security Advisory Checker
     sensiolabs_security_checker: true
-tests:
-    override:
-        use_website_config:  false
+
+build:
+    nodes:
+        analysis:
+            dependencies:
+                after:
+                    - composer require --dev squizlabs/php_codesniffer
+
+            tests:
+                override:
+                    -
+                        command: phpcs-run
+                        use_website_config: false
