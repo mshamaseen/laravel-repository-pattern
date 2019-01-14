@@ -7,14 +7,14 @@
  */
 return [
     'app_path' => realpath(__DIR__.'/../app/'),
-    'route_path' => realpath(__DIR__.'/../routes/'),
-    'resources_path' => realpath(__DIR__.'/../resources/'),
+    'route_path' => realpath('routes/'),
+    'resources_path' => realpath('resources/'),
 
     //relative to app path
-    'interfaces_path' => realpath(__DIR__.'/../app/').'/Interfaces/',
-    'models_path' => realpath(__DIR__.'/../app/').'/Entities/',
-    'controllers_path' => realpath(__DIR__.'/../app/').'/Http/Controllers/',
-    'repositories_path' => realpath(__DIR__.'/../app/').'/Repositories/',
-    'requests_path' => realpath(__DIR__.'/../app/').'/Http/Requests/',
+    'interfaces_path' => 'Interfaces/',
+    'models_path' => 'Entities/',
+    'controllers_path' => 'Http/Controllers/',
+    'repositories_path' => 'Repositories/',
+    'requests_path' => 'Http/Requests/',
 
 ];
