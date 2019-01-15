@@ -333,7 +333,7 @@ class Controller extends \App\Http\Controllers\Controller
             return \Redirect::to($this->routeIndex)->with('error', __('messages.not_modified'));
         }
 
-        if ($entity) {
+        if (!$entity) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
         }
 
@@ -366,7 +366,7 @@ class Controller extends \App\Http\Controllers\Controller
             return \Redirect::to($this->routeIndex)->with('error', __('messages.not_modified'));
         }
 
-        if ($entity) {
+        if (!$entity) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
         }
 

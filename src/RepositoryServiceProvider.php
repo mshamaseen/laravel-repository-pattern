@@ -32,21 +32,24 @@ class RepositoryServiceProvider extends ServiceProvider
     {
         parent::__construct($app);
         $contractsFolder = realpath(__DIR__ . '/../../../../app/Contracts');
-        $directory = new \RecursiveDirectoryIterator($contractsFolder);
-        $iterator = new \RecursiveIteratorIterator($directory);
-        $regex = new \RegexIterator($iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
-        foreach ($regex as $name => $value) {
+        if($contractsFolder){
+            $directory = new \RecursiveDirectoryIterator($contractsFolder);
+            $iterator = new \RecursiveIteratorIterator($directory);
+            $regex = new \RegexIterator($iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
+            foreach ($regex as $name => $value) {
 
-            if (strpos($name, 'BaseContract') === false) {
-                $contract = explode('app/', $name);
-                $contract = explode('.php', $contract[1]);
-                $contractName = "App\\" . str_replace('/', '\\', $contract[0]);
-                $repository = str_replace('Contracts', 'Repositories', $contractName);
-                $repository = str_replace('Contract', 'Repository', $repository);
-                $this->providers[] = $contractName;
-                $this->bindings[$contractName] = $repository;
+                if (strpos($name, 'BaseContract') === false) {
+                    $contract = explode('app/', $name);
+                    $contract = explode('.php', $contract[1]);
+                    $contractName = "App\\" . str_replace('/', '\\', $contract[0]);
+                    $repository = str_replace('Contracts', 'Repositories', $contractName);
+                    $repository = str_replace('Contract', 'Repository', $repository);
+                    $this->providers[] = $contractName;
+                    $this->bindings[$contractName] = $repository;
+                }
             }
         }
+
     }
 
     /**
