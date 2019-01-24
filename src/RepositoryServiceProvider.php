@@ -34,7 +34,9 @@ class RepositoryServiceProvider extends ServiceProvider
 
         parent::__construct($app);
 
-
+        if ($this->app['config']->get('repository') === null) {
+            $this->app['config']->set('repository', require __DIR__.'/config/repository.php');
+        }
         $interfaces= str_plural(Config::get('repository.interface'));
         $repositories= str_plural(Config::get('repository.repository'));
         $interface= Config::get('repository.interface');
