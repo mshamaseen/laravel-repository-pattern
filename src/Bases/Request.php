@@ -18,7 +18,7 @@ use Illuminate\Validation\ValidationException;
  * Class BaseRequests
  * @package App\Http\Requests
  */
-class Requests extends FormRequest
+class Request extends FormRequest
 {
 
     /**

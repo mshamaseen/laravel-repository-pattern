@@ -9,7 +9,6 @@
 namespace Shamaseen\Repository\Generator\Bases;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 /**
@@ -18,7 +17,7 @@ use Illuminate\Support\Collection;
 class Controller extends \App\Http\Controllers\Controller
 {
     /**
-     * @var Contract
+     * @var ContractInterface
      */
     protected $interface;
 
@@ -36,7 +35,7 @@ class Controller extends \App\Http\Controllers\Controller
     protected $breadcrumbs;
 
     protected $menu;
-    protected $search ;
+    protected $search;
     protected $selectedMenu = [];
     protected $isAPI = false;
     protected $trash = false;
@@ -49,24 +48,24 @@ class Controller extends \App\Http\Controllers\Controller
     /**
      * BaseController constructor.
      *
-     * @param Contract $interface
-     * @param Request $request
+     * @param ContractInterface $interface
+     * @param Request           $request
      */
-    public function __construct(Contract $interface, Request $request)
+    public function __construct(ContractInterface $interface, Request $request)
     {
         $this->menu = new Collection();
         $this->breadcrumbs = new Collection();
 
         $language = $request->header('Language', 'en');
-        if (!in_array($language, \Config::get('app.locales', []))) {
+        if (! in_array($language, \Config::get('app.locales', []))) {
             $language = 'en';
         }
         $limit = $request->get('limit', 10);
 
-        if ((bool)$request->get('with-trash', false)) {
+        if ((bool) $request->get('with-trash', false)) {
             $interface->withTrash();
         }
-        if ((bool)$request->get('only-trash', false)) {
+        if ((bool) $request->get('only-trash', false)) {
             $interface->trash();
         }
 
@@ -81,10 +80,10 @@ class Controller extends \App\Http\Controllers\Controller
         $this->interface = $interface;
         $this->isAPI = $request->expectsJson();
 
-        if (!$this->isAPI) {
+        if (! $this->isAPI) {
             $this->breadcrumbs = new Collection();
             $this->search = new Collection();
-            \View::share('pageTitle', $this->pageTitle . ' | ' . \Config::get('app.name'));
+            \View::share('pageTitle', $this->pageTitle.' | '.\Config::get('app.name'));
             \View::share('breadcrumbs', $this->breadcrumbs);
             \View::share('menu', $this->menu);
             \View::share('search', $this->search);
@@ -102,8 +101,8 @@ class Controller extends \App\Http\Controllers\Controller
     public function index()
     {
         $data = $this->interface->simplePaginate($this->limit, $this->request->all());
-        if (!$this->isAPI) {
-            \View::share('pageTitle', 'List ' . $this->pageTitle . ' | ' . \Config::get('app.name'));
+        if (! $this->isAPI) {
+            \View::share('pageTitle', 'List '.$this->pageTitle.' | '.\Config::get('app.name'));
             $this->breadcrumbs->put('index', [
                 'link' => $this->routeIndex,
                 'text' => $this->pageTitle,
@@ -131,8 +130,8 @@ class Controller extends \App\Http\Controllers\Controller
      */
     public function create()
     {
-        if (!$this->isAPI) {
-            \View::share('pageTitle', 'Create ' . $this->pageTitle . ' | ' . \Config::get('app.name'));
+        if (! $this->isAPI) {
+            \View::share('pageTitle', 'Create '.$this->pageTitle.' | '.\Config::get('app.name'));
             $this->breadcrumbs->put('create', [
                 'link' => $this->createRoute,
                 'text' => trans('common/others.create'),
@@ -152,7 +151,7 @@ class Controller extends \App\Http\Controllers\Controller
     public function baseStore()
     {
         $entity = $this->interface->create($this->request->except(['_token', '_method']));
-        if (!$this->isAPI) {
+        if (! $this->isAPI) {
             if ($entity) {
                 return \Redirect::to($this->routeIndex)->with('message', __('messages.success'));
             }
@@ -183,11 +182,11 @@ class Controller extends \App\Http\Controllers\Controller
     public function show($entityId)
     {
         $entity = $this->interface->find($entityId);
-        if (!$this->isAPI) {
-            if (!$entity) {
+        if (! $this->isAPI) {
+            if (! $entity) {
                 return \Redirect::to($this->routeIndex)->with('warning', __('messages.not_found'));
             }
-            \View::share('pageTitle', 'View ' . $this->pageTitle . ' | ' . \Config::get('app.name'));
+            \View::share('pageTitle', 'View '.$this->pageTitle.' | '.\Config::get('app.name'));
             $this->breadcrumbs->put('view', [
                 'link' => '',
                 'text' => $entity->name ?? $entity->title ?? __('messages.view'),
@@ -196,7 +195,7 @@ class Controller extends \App\Http\Controllers\Controller
             return view($this->viewShow, $this->params)
                 ->with('entity', $entity);
         }
-        if (!$entity) {
+        if (! $entity) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
         }
 
@@ -216,8 +215,8 @@ class Controller extends \App\Http\Controllers\Controller
     public function edit($entityId)
     {
         $entity = $this->interface->find($entityId);
-        if (!$this->isAPI) {
-            if (!$entity) {
+        if (! $this->isAPI) {
+            if (! $entity) {
                 return \Redirect::to($this->routeIndex)->with('warning', __('messages.not_found'));
             }
             $this->breadcrumbs->put('edit', [
@@ -248,8 +247,8 @@ class Controller extends \App\Http\Controllers\Controller
             $saved = $this->interface->update($entityId, $this->request->except(['_token', '_method']));
         }
 
-        if (!$this->isAPI) {
-            if (!$entity) {
+        if (! $this->isAPI) {
+            if (! $entity) {
                 return \Redirect::to($this->routeIndex)->with('warning', __('messages.not_found'));
             }
 
@@ -260,7 +259,7 @@ class Controller extends \App\Http\Controllers\Controller
             return \Redirect::to($this->routeIndex)->with('error', __('messages.not_modified'));
         }
 
-        if (!$entity) {
+        if (! $entity) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
         }
 
@@ -280,6 +279,7 @@ class Controller extends \App\Http\Controllers\Controller
      * @param int $entityId
      *
      * @return \Illuminate\Http\RedirectResponse
+     * @throws \Exception
      */
     public function destroy($entityId)
     {
@@ -289,8 +289,8 @@ class Controller extends \App\Http\Controllers\Controller
         if ($entity) {
             $deleted = $this->interface->delete($entityId);
         }
-        if (!$this->isAPI) {
-            if (!$entity) {
+        if (! $this->isAPI) {
+            if (! $entity) {
                 return \Redirect::to($this->routeIndex)->with('warning', __('messages.not_found'));
             }
             if ($deleted) {
@@ -322,8 +322,8 @@ class Controller extends \App\Http\Controllers\Controller
     {
         $entity = $this->interface->restore($entityId);
 
-        if (!$this->isAPI) {
-            if (!$entity) {
+        if (! $this->isAPI) {
+            if (! $entity) {
                 return \Redirect::to($this->routeIndex)->with('warning', __('messages.not_found'));
             }
             if ($entity) {
@@ -333,7 +333,7 @@ class Controller extends \App\Http\Controllers\Controller
             return \Redirect::to($this->routeIndex)->with('error', __('messages.not_modified'));
         }
 
-        if (!$entity) {
+        if (! $entity) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
         }
 
@@ -355,8 +355,8 @@ class Controller extends \App\Http\Controllers\Controller
     {
         $entity = $this->interface->forceDelete($entityId);
 
-        if (!$this->isAPI) {
-            if (!$entity) {
+        if (! $this->isAPI) {
+            if (! $entity) {
                 return \Redirect::to($this->routeIndex)->with('warning', __('messages.not_found'));
             }
             if ($entity) {
@@ -366,7 +366,7 @@ class Controller extends \App\Http\Controllers\Controller
             return \Redirect::to($this->routeIndex)->with('error', __('messages.not_modified'));
         }
 
-        if (!$entity) {
+        if (! $entity) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
         }
 

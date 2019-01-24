@@ -7,7 +7,7 @@ use Shamaseen\Repository\Generator\Bases\Requests;
  * Class NewsRequest
  * @package App\Http\Requests\{{modelNamePlural}}
  */
-class {{modelName}}Request extends Requests
+class {{modelName}}Request extends Request
 {
     protected $rules = [
 
