@@ -76,15 +76,7 @@ abstract class AbstractRepository implements ContractInterface
      */
     public function filter($filters = [])
     {
-        if (isset($filters['order'])) {
-            $this->order = $filters['order'];
-            unset($filters['order']);
-        }
-
-        if (isset($filters['direction'])) {
-            $this->direction = $filters['direction'];
-            unset($filters['direction']);
-        }
+        $filters= $this->order($filters);
 
         /** @var Entity $latest */
         $latest = $this->model->with($this->with);
@@ -96,10 +88,9 @@ abstract class AbstractRepository implements ContractInterface
             foreach ($this->model->searchable as $item) {
                 $latest->where($item, 'like', '%' . $filters['search'] . '%', 'or');
             }
-
             unset($filters['search']);
         }
-        unset($filters['page']);
+
 
         if ($this->trash) {
             $latest->onlyTrashed();
@@ -109,6 +100,29 @@ abstract class AbstractRepository implements ContractInterface
         }
 
         return $latest->where($filters);
+    }
+
+    /**
+     * prepare order for query
+     *
+     * @param array $filters
+     *
+     * @return array
+     */
+    private function order($filters=[]){
+
+        if (isset($filters['order'])) {
+            $this->order = $filters['order'];
+            unset($filters['order']);
+        }
+
+        if (isset($filters['direction'])) {
+            $this->direction = $filters['direction'];
+            unset($filters['direction']);
+        }
+        unset($filters['page']);
+
+        return $filters;
     }
 
     /**
