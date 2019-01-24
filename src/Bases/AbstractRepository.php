@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 /**
  * Class Database.
  */
-abstract class AbstractRepository implements Contract
+abstract class AbstractRepository implements ContractInterface
 {
     protected $with = [];
     /**

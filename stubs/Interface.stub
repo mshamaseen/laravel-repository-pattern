@@ -3,12 +3,12 @@
 namespace App\Interfaces\{{modelNamePlural}};
 
 
-use Shamaseen\Repository\Generator\Bases\Contract;
+use Shamaseen\Repository\Generator\Bases\ContractInterface;
 /**
  * Interface {{modelName}}Interface
  * @package App\Interfaces\{{modelNamePlural}}
  */
-interface {{modelName}}Interface extends Contract
+interface {{modelName}}Interface extends ContractInterface
 {
 
 }

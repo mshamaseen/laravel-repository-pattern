@@ -10,23 +10,24 @@ namespace Shamaseen\Repository\Generator\Bases;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
 
 /**
  * Interface EloquentInterface.
  */
-interface Contract
+interface ContractInterface
 {
     /**
      * @param array $columns
      *
-     * @return mixed
+     * @return Collection|Entity[]
      */
     public function all($columns = ['*']);
 
     /**
      * @param array $data
      *
-     * @return mixed
+     * @return bool
      */
     public function insert($data = []);
 
@@ -41,7 +42,9 @@ interface Contract
     /**
      * @param $entityId
      *
-     * @return mixed
+     * @throws \Exception
+     *
+     * @return bool
      */
     public function delete($entityId);
 
@@ -49,7 +52,7 @@ interface Contract
      * @param $entityId
      * @param array $columns
      *
-     * @return mixed
+     *  @return Entity
      */
     public function find($entityId, $columns = ['*']);
 
@@ -57,7 +60,7 @@ interface Contract
      * @param array $filters
      * @param array $columns
      *
-     * @return mixed
+     *  @return Entity
      */
     public function findBy($filters = [], $columns = ['*']);
 
@@ -97,28 +100,30 @@ interface Contract
      * @param array $filter
      * @param array $columns
      *
-     * @return mixed
+     *  @return Entity
      */
     public function first($filter = [], $columns = ['*']);
 
     /**
      * @param array $data
      *
-     * Base|\Illuminate\Database\Eloquent\Model
+     * Entity|\Illuminate\Database\Eloquent\Model
+     *
+     * @return Entity
      */
     public function create($data = []);
 
     /**
      * @param array $data
      *
-     * @return mixed
+     * @return Entity
      */
     public function createOrFirst($data = []);
 
     /**
      * @param array $data
      *
-     * @return mixed
+     * @return Entity
      */
     public function createOrUpdate($data = []);
 
@@ -140,13 +145,13 @@ interface Contract
 
     /**
      * @param int $entityId
-     * @return mixed
+     * @return bool|null
      */
     public function restore($entityId = 0);
 
     /**
      * @param int $categoryId
-     * @return mixed
+     * @return bool|null
      */
     public function forceDelete($categoryId = 0);
 }
