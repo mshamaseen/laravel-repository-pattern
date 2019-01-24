@@ -58,7 +58,7 @@ class Controller extends \App\Http\Controllers\Controller
         $this->breadcrumbs = new Collection();
 
         $language = $request->header('Language', 'en');
-        if (!in_array($language, \Config::get('app.locales'))) {
+        if (!in_array($language, \Config::get('app.locales', []))) {
             $language = 'en';
         }
         $limit = $request->get('limit', 10);

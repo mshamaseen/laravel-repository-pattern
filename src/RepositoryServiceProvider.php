@@ -2,6 +2,7 @@
 
 namespace Shamaseen\Repository\Generator;
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -30,25 +31,35 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function __construct($app)
     {
+
         parent::__construct($app);
-        $contractsFolder = realpath(__DIR__ . '/../../../../app/Contracts');
-        if($contractsFolder){
+
+
+        $interfaces= str_plural(Config::get('repository.interface'));
+        $repositories= str_plural(Config::get('repository.repository'));
+        $interface= Config::get('repository.interface');
+        $repository= Config::get('repository.repository');
+
+        $contractsFolder = realpath(__DIR__ . '/../../../../app/' . $interfaces);
+        if ($contractsFolder) {
             $directory = new \RecursiveDirectoryIterator($contractsFolder);
             $iterator = new \RecursiveIteratorIterator($directory);
             $regex = new \RegexIterator($iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
             foreach ($regex as $name => $value) {
 
-                if (strpos($name, 'BaseContract') === false) {
-                    $contract = explode('app/', $name);
-                    $contract = explode('.php', $contract[1]);
-                    $contractName = "App\\" . str_replace('/', '\\', $contract[0]);
-                    $repository = str_replace('Contracts', 'Repositories', $contractName);
-                    $repository = str_replace('Contract', 'Repository', $repository);
-                    $this->providers[] = $contractName;
-                    $this->bindings[$contractName] = $repository;
-                }
+                $contract = explode('app/', $name);
+                $contract = explode('.php', $contract[1]);
+                $contractName = "App\\" . str_replace('/', '\\', $contract[0]);
+
+                $repositoryClass = str_replace($interfaces, $repositories, $contractName);
+                $repositoryClass = str_replace($interface, $repository, $repositoryClass);
+
+                $this->providers[] = $contractName;
+                $this->bindings[$contractName] = $repositoryClass;
+
             }
         }
+
 
     }
 

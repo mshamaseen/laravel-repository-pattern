@@ -68,13 +68,15 @@ class Generator extends Command
             $this->repoNamespace = $file[count($file) - 1];
             $this->repoNamespace = implode("\\", $file);
         }
-
+        $model= str_plural(\Config::get('repository.model'));
+        $interface= str_plural(\Config::get('repository.interface'));
+        $repository= str_plural(\Config::get('repository.repository'));
 
         $this->generate($path, \Config::get('repository.controllers_path'), 'Controller');
-        $this->generate($path, \Config::get('repository.models_path'), 'Entity');
+        $this->generate($path, $model, 'Entity');
         $this->generate($path, \Config::get('repository.requests_path'), 'Request');
-        $this->generate($path, \Config::get('repository.interfaces_path'), 'Interface');
-        $this->generate($path, \Config::get('repository.repositories_path'), 'Repository');
+        $this->generate($path, $interface, 'Interface');
+        $this->generate($path, $repository, 'Repository');
 
         File::append(\Config::get('repository.route_path') . 'web.php', "\n" . 'Route::resource(\'' . str_plural($this->repoName) . "', '{$this->repoName}Controller');");
 
@@ -88,7 +90,7 @@ class Generator extends Command
      */
     protected function getStub($type)
     {
-        return file_get_contents(\Config::get('repository.resources_path') . "/stubs/$type.stub");
+        return file_get_contents(\Config::get('repository.resources_path') . "/$type.stub");
     }
 
     /**
@@ -110,7 +112,7 @@ class Generator extends Command
             ],
             $this->getStub($type)
         );
-        $filePath = $this->checkFolder(\Config::get('repository.app_path') . '/' . $folder . $path . "/");
+        $filePath = $this->checkFolder(\Config::get('repository.app_path') . "/{$folder}/{$path}/");
         file_put_contents($filePath . "{$this->repoName}{$type}.php", $template);
 
     }
