@@ -298,7 +298,7 @@ abstract class AbstractRepository implements ContractInterface
     /**
      * @param int $entityId
      *
-     * @return bool|null
+     * @return bool
      */
     public function restore($entityId = 0)
     {
@@ -307,7 +307,7 @@ abstract class AbstractRepository implements ContractInterface
             ->whereId($entityId)
             ->first();
         if ($entity) {
-            return $entity->restore();
+            return $entity->restore() ?? false;
         }
 
         return false;
@@ -316,7 +316,7 @@ abstract class AbstractRepository implements ContractInterface
     /**
      * @param int $entityId
      *
-     * @return bool|null
+     * @return bool
      */
     public function forceDelete($entityId = 0)
     {
@@ -325,7 +325,7 @@ abstract class AbstractRepository implements ContractInterface
             ->whereId($entityId)
             ->first();
         if ($entity) {
-            return $entity->forceDelete();
+            return $entity->forceDelete() ?? false;
         }
 
         return false;

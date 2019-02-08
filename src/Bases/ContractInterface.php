@@ -145,13 +145,13 @@ interface ContractInterface
 
     /**
      * @param int $entityId
-     * @return bool|null
+     * @return bool
      */
     public function restore($entityId = 0);
 
     /**
      * @param int $categoryId
-     * @return bool|null
+     * @return bool
      */
     public function forceDelete($categoryId = 0);
 }
