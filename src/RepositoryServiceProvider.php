@@ -48,7 +48,6 @@ class RepositoryServiceProvider extends ServiceProvider
             $iterator = new \RecursiveIteratorIterator($directory);
             $regex = new \RegexIterator($iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
             foreach ($regex as $name => $value) {
-
                 $contract = explode('app/', $name);
                 $contract = explode('.php', $contract[1]);
                 $contractName = "App\\" . str_replace('/', '\\', $contract[0]);
@@ -58,11 +57,8 @@ class RepositoryServiceProvider extends ServiceProvider
 
                 $this->providers[] = $contractName;
                 $this->bindings[$contractName] = $repositoryClass;
-
             }
         }
-
-
     }
 
     /**

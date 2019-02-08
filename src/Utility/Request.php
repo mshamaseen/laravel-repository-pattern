@@ -6,7 +6,7 @@
  * Time: 01:01 م.
  */
 
-namespace Shamaseen\Repository\Generator\Bases;
+namespace Shamaseen\Repository\Generator\Utility;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;

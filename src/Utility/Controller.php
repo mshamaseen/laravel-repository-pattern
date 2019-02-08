@@ -6,7 +6,7 @@
  * Time: 9:53 AM.
  */
 
-namespace Shamaseen\Repository\Generator\Bases;
+namespace Shamaseen\Repository\Generator\Utility;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;

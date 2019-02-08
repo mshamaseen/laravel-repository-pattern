@@ -6,7 +6,7 @@
  * Time: 9:38 AM.
  */
 
-namespace Shamaseen\Repository\Generator\Bases;
+namespace Shamaseen\Repository\Generator\Utility;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
@@ -57,44 +57,44 @@ interface ContractInterface
     public function find($entityId, $columns = ['*']);
 
     /**
-     * @param array $filters
+     * @param array $criteria
      * @param array $columns
      *
      *  @return Entity
      */
-    public function findBy($filters = [], $columns = ['*']);
+    public function findBy($criteria = [], $columns = ['*']);
 
     /**
      * @param int $limit
-     * @param array $filters
+     * @param array $criteria
      *
      * @return LengthAwarePaginator
      */
-    public function paginate($limit = 10, $filters = []);
+    public function paginate($limit = 10, $criteria = []);
 
     /**
      * @param int $limit
-     * @param array $filters
+     * @param array $criteria
      *
      * @return Paginator
      */
-    public function simplePaginate($limit = 10, $filters = []);
+    public function simplePaginate($limit = 10, $criteria = []);
 
     /**
-     * @param array $filters
+     * @param array $criteria
      *
      * @return LengthAwarePaginator
      */
-    public function get($filters = []);
+    public function get($criteria = []);
 
     /**
      * @param string $name
      * @param string $entityId
-     * @param array $filters
+     * @param array $criteria
      *
      * @return array
      */
-    public function pluck($name = 'name', $entityId = 'id', $filters = []);
+    public function pluck($name = 'name', $entityId = 'id', $criteria = []);
 
     /**
      * @param array $filter

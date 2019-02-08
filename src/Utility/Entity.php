@@ -6,7 +6,7 @@
  * Time: 12:15 PM.
  */
 
-namespace Shamaseen\Repository\Generator\Bases;
+namespace Shamaseen\Repository\Generator\Utility;
 
 use Eloquent;
 use Illuminate\Database\Query\Builder;

@@ -6,10 +6,12 @@
  * Time: 9:38 AM.
  */
 
-namespace Shamaseen\Repository\Generator\Bases;
+namespace Shamaseen\Repository\Generator\Utility;
 
 
 use Illuminate\Container\Container as App;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -61,22 +63,22 @@ abstract class AbstractRepository implements ContractInterface
 
     /**
      * @param int $limit
-     * @param array $filters
+     * @param array $criteria
      *
-     * @return \Illuminate\Contracts\Pagination\Paginator
+     * @return Paginator
      */
-    public function simplePaginate($limit = 10, $filters = [])
+    public function simplePaginate($limit = 10, $criteria = [])
     {
-        return $this->filter($filters)->simplePaginate($limit);
+        return $this->filter($criteria)->simplePaginate($limit);
     }
 
     /**
-     * @param array $filters
+     * @param array $criteria
      * @return Entity
      */
-    public function filter($filters = [])
+    public function filter($criteria = [])
     {
-        $filters= $this->order($filters);
+        $criteria= $this->order($criteria);
 
         /** @var Entity $latest */
         $latest = $this->model->with($this->with);
@@ -84,11 +86,11 @@ abstract class AbstractRepository implements ContractInterface
             $latest->orderBy($this->order, $this->direction);
         }
 
-        if (isset($filters['search'])) {
+        if (isset($criteria['search'])) {
             foreach ($this->model->searchable as $item) {
-                $latest->where($item, 'like', '%' . $filters['search'] . '%', 'or');
+                $latest->where($item, 'like', '%' . $criteria['search'] . '%', 'or');
             }
-            unset($filters['search']);
+            unset($criteria['search']);
         }
 
 
@@ -99,51 +101,51 @@ abstract class AbstractRepository implements ContractInterface
             $latest->withTrashed();
         }
 
-        return $latest->where($filters);
+        return $latest->where($criteria);
     }
 
     /**
      * prepare order for query
      *
-     * @param array $filters
+     * @param array $criteria
      *
      * @return array
      */
-    private function order($filters=[]){
+    private function order($criteria=[]){
 
-        if (isset($filters['order'])) {
-            $this->order = $filters['order'];
-            unset($filters['order']);
+        if (isset($criteria['order'])) {
+            $this->order = $criteria['order'];
+            unset($criteria['order']);
         }
 
-        if (isset($filters['direction'])) {
-            $this->direction = $filters['direction'];
-            unset($filters['direction']);
+        if (isset($criteria['direction'])) {
+            $this->direction = $criteria['direction'];
+            unset($criteria['direction']);
         }
-        unset($filters['page']);
+        unset($criteria['page']);
 
-        return $filters;
+        return $criteria;
     }
 
     /**
      * @param int $limit
-     * @param array $filters
+     * @param array $criteria
      *
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return LengthAwarePaginator
      */
-    public function paginate($limit = 10, $filters = [])
+    public function paginate($limit = 10, $criteria = [])
     {
-        return $this->filter($filters)->paginate($limit);
+        return $this->filter($criteria)->paginate($limit);
     }
 
     /**
-     * @param array $filters
+     * @param array $criteria
      *
      * @return Builder[]|\Illuminate\Database\Eloquent\Collection
      */
-    public function get($filters = [])
+    public function get($criteria = [])
     {
-        return $this->filter($filters)->get();
+        return $this->filter($criteria)->get();
     }
 
     /**
@@ -201,13 +203,13 @@ abstract class AbstractRepository implements ContractInterface
     /**
      * @param string $name
      * @param string $entityId
-     * @param array $filters
+     * @param array $criteria
      *
      * @return array
      */
-    public function pluck($name = 'name', $entityId = 'id', $filters = [])
+    public function pluck($name = 'name', $entityId = 'id', $criteria = [])
     {
-        return $this->model->where($filters)->pluck($name, $entityId)->toArray();
+        return $this->model->where($criteria)->pluck($name, $entityId)->toArray();
     }
 
     /**
@@ -245,14 +247,14 @@ abstract class AbstractRepository implements ContractInterface
 
 
     /**
-     * @param $filters
+     * @param $criteria
      * @param array $columns
      *
      * @return Entity
      */
-    public function findBy($filters = [], $columns = ['*'])
+    public function findBy($criteria = [], $columns = ['*'])
     {
-        return $this->model->with($this->with)->select($columns)->where($filters)->first();
+        return $this->model->with($this->with)->select($columns)->where($criteria)->first();
     }
 
     /**
