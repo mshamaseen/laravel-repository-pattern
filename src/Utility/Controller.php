@@ -148,7 +148,7 @@ class Controller extends \App\Http\Controllers\Controller
      *
      * @return \Illuminate\Http\RedirectResponse|mixed
      */
-    public function baseStore()
+    public function store()
     {
         $entity = $this->interface->create($this->request->except(['_token', '_method']));
         if (! $this->isAPI) {
@@ -238,7 +238,7 @@ class Controller extends \App\Http\Controllers\Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function baseUpdate($entityId)
+    public function update($entityId)
     {
         $entity = $this->interface->find($entityId);
         $saved = false;
