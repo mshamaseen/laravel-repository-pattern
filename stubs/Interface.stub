@@ -3,7 +3,7 @@
 namespace App\Interfaces\{{modelNamePlural}};
 
 
-use Shamaseen\Repository\Generator\Bases\ContractInterface;
+use Shamaseen\Repository\Generator\Utility\ContractInterface;
 /**
  * Interface {{modelName}}Interface
  * @package App\Interfaces\{{modelNamePlural}}

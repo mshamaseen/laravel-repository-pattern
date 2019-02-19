@@ -2,7 +2,7 @@
 
 namespace App\Entities\{{modelNamePlural}};
 
-use Shamaseen\Repository\Generator\Bases\Entity;
+use Shamaseen\Repository\Generator\Utility\Entity;
 /**
  * Class {{modelName}}
  * @package App\Entities\Contents

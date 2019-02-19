@@ -4,7 +4,7 @@ namespace App\Http\Controllers\{{modelNamePlural}};
 
 use App\Http\Requests\{{modelNamePlural}}\{{modelName}}Request;
 use App\Interfaces\{{modelNamePlural}}\{{modelName}}Interface;
-use Shamaseen\Repository\Generator\Bases\Controller;
+use Shamaseen\Repository\Generator\Utility\Controller;
 /**
  * Class {{modelName}}Controller
  * @package App\Http\Controllers\{{modelNamePlural}}

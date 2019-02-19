@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\{{modelNamePlural}};
 
-use Shamaseen\Repository\Generator\Bases\Requests;
+use Shamaseen\Repository\Generator\Utility\Requests;
 /**
  * Class NewsRequest
  * @package App\Http\Requests\{{modelNamePlural}}
