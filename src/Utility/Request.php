@@ -34,6 +34,7 @@ class Request extends FormRequest
             throw new HttpResponseException(response()->json(['success' => false, 'errors' => $errors,
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
         }
+        parent::failedValidation($validator);
     }
 
     public function rules(){
