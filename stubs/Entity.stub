@@ -7,7 +7,7 @@ use Shamaseen\Repository\Generator\Utility\Entity;
  * Class {{modelName}}
  * @package App\Entities\Contents
  */
-class {{modelName}}Entity extends Entity
+class {{modelName}} extends Entity
 {
     protected $guarded = [];
 }

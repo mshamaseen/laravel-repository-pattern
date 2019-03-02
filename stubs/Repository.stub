@@ -2,7 +2,7 @@
 
 namespace App\Repositories\{{modelNamePlural}};
 
-use App\Entities\{{modelNamePlural}}\{{modelName}}Entity;
+use App\Entities\{{modelNamePlural}}\{{modelName}};
 use App\Interfaces\{{modelNamePlural}}\{{modelName}}Interface;
 use Shamaseen\Repository\Generator\Utility\AbstractRepository;
 use Illuminate\Container\Container as App;
@@ -25,6 +25,6 @@ class {{modelName}}Repository extends AbstractRepository implements {{modelName}
      */
     protected function getModelClass(): string
     {
-        return {{modelName}}Entity::class;
+        return {{modelName}}::class;
     }
 }
