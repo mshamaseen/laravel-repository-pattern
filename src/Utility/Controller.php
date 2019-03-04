@@ -22,6 +22,7 @@ class Controller extends \App\Http\Controllers\Controller
     protected $interface;
 
     protected $limit = 10;
+    protected $maxLimit = 100;
 
     protected $routeIndex = '';
 
@@ -72,7 +73,7 @@ class Controller extends \App\Http\Controllers\Controller
         $request->offsetUnset('only-trash');
         $request->offsetUnset('with-trash');
 
-        if (in_array($limit, [20, 30, 40, 50])) {
+        if ($limit <= $this->maxLimit) {
             $this->limit = $limit;
         }
 
@@ -224,7 +225,7 @@ class Controller extends \App\Http\Controllers\Controller
     {
         $entity = $this->interface->update($entityId, $this->request->except(['_token', '_method']));
 
-        return $this->makeResponse($entity,ture);
+        return $this->makeResponse($entity,true);
     }
 
     /**
