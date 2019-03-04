@@ -152,14 +152,15 @@ abstract class AbstractRepository implements ContractInterface
      * @param $entityId
      * @param array $attributes
      *
-     * @return bool
+     * @return BaseEntity|bool
      */
     public function update($entityId = 0, $attributes = [])
     {
-        $item = $this->model->where('id', $entityId);
+        $item = $this->model->findOrFail('id');
 
-        if ($item) {
-            return $item->update($attributes);
+        if($item->update($attributes))
+        {
+            return $item;
         }
 
         return false;
@@ -174,7 +175,7 @@ abstract class AbstractRepository implements ContractInterface
      */
     public function delete($entityId = 0)
     {
-        $item = $this->model->where('id', $entityId);
+        $item = $this->model->findOrFail($entityId);
 
         return $item->delete();
     }
@@ -226,7 +227,7 @@ abstract class AbstractRepository implements ContractInterface
     /**
      * @param $entityId
      * @param array $columns
-     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @return Entity
      */
     public function findOrFail($entityId = 0, $columns = ['*'])

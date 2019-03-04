@@ -35,7 +35,7 @@ interface ContractInterface
      * @param array $data
      * @param $entityId
      *
-     * @return bool
+     * @return BaseEntity|bool
      */
     public function update($entityId, $data = []);
 
@@ -55,6 +55,14 @@ interface ContractInterface
      *  @return Entity
      */
     public function find($entityId, $columns = ['*']);
+
+    /**
+     * @param $entityId
+     * @param array $columns
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @return Entity
+     */
+    public function findOrFail($entityId = 0, $columns = ['*']);
 
     /**
      * @param array $criteria

@@ -151,25 +151,7 @@ class Controller extends \App\Http\Controllers\Controller
     public function store()
     {
         $entity = $this->interface->create($this->request->except(['_token', '_method']));
-        if (! $this->isAPI) {
-            if ($entity) {
-                return \Redirect::to($this->routeIndex)->with('message', __('messages.success'));
-            }
-
-            return \Redirect::to($this->routeIndex)->with('error', __('messages.error'));
-        }
-
-        if ($entity) {
-            return response()->json(
-                ['status' => true, 'message' => __('messages.success'), 'data' => $entity],
-                JsonResponse::HTTP_OK
-            );
-        }
-
-        return response()->json(
-            ['status' => false, 'message' => __('messages.error')],
-            JsonResponse::HTTP_OK
-        );
+        return $this->makeResponse($entity,true);
     }
 
     /**
@@ -240,38 +222,9 @@ class Controller extends \App\Http\Controllers\Controller
      */
     public function update($entityId)
     {
-        //Todo Should we do find or fail here ?
-        $entity = $this->interface->find($entityId);
-        $saved = false;
+        $entity = $this->interface->update($entityId, $this->request->except(['_token', '_method']));
 
-        if ($entity) {
-            $saved = $this->interface->update($entityId, $this->request->except(['_token', '_method']));
-        }
-
-        if (! $this->isAPI) {
-            if (! $entity) {
-                return \Redirect::to($this->routeIndex)->with('warning', __('messages.not_found'));
-            }
-
-            if ($saved) {
-                return \Redirect::to($this->routeIndex)->with('message', __('messages.success'));
-            }
-
-            return \Redirect::to($this->routeIndex)->with('error', __('messages.not_modified'));
-        }
-
-        if (! $entity) {
-            return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
-        }
-
-        if ($saved) {
-            return response()->json(
-                ['status' => true, 'message' => __('messages.success'), 'data' => $entity],
-                JsonResponse::HTTP_OK
-            );
-        }
-
-        return response()->json(null, JsonResponse::HTTP_NOT_MODIFIED);
+        return $this->makeResponse($entity,ture);
     }
 
     /**
@@ -284,13 +237,9 @@ class Controller extends \App\Http\Controllers\Controller
      */
     public function destroy($entityId)
     {
-        $entity = $this->interface->find($entityId);
-        $deleted = false;
+        $deleted = $this->interface->delete($entityId);
 
-        if ($entity) {
-            $deleted = $this->interface->delete($entityId);
-        }
-        return $this->makeResponse($entity);
+        return $this->makeResponse($deleted);
     }
 
     /**
