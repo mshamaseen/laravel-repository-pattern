@@ -55,7 +55,6 @@ class Generator extends Command
      */
     public function handle()
     {
-
         $file = explode("/", (string)$this->argument('name'));
 
         $this->repoName = $file[count($file) - 1];
@@ -78,7 +77,7 @@ class Generator extends Command
         $this->generate($path, $interface, 'Interface');
         $this->generate($path, $repository, 'Repository');
 
-        File::append(\Config::get('repository.route_path') . 'web.php', "\n" . 'Route::resource(\'' . str_plural($this->repoName) . "', '{$this->repoName}Controller');");
+        File::append(\Config::get('repository.route_path') . '/web.php', "\n" . 'Route::resource(\'' . str_plural($this->repoName) . "', '{$this->repoName}Controller');");
 
     }
 
@@ -113,7 +112,13 @@ class Generator extends Command
             $this->getStub($type)
         );
         $filePath = $this->checkFolder(\Config::get('repository.app_path') . "/{$folder}/{$path}/");
-        file_put_contents($filePath . "{$this->repoName}{$type}.php", $template);
+        if($type == 'Entity')
+        {
+            file_put_contents($filePath . "{$this->repoName}.php", $template);
+        }else
+        {
+            file_put_contents($filePath . "{$this->repoName}{$type}.php", $template);
+        }
 
     }
 

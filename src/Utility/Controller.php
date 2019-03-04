@@ -240,6 +240,7 @@ class Controller extends \App\Http\Controllers\Controller
      */
     public function update($entityId)
     {
+        //Todo Should we do find or fail here ?
         $entity = $this->interface->find($entityId);
         $saved = false;
 
@@ -289,26 +290,7 @@ class Controller extends \App\Http\Controllers\Controller
         if ($entity) {
             $deleted = $this->interface->delete($entityId);
         }
-        if (! $this->isAPI) {
-            if (! $entity) {
-                return \Redirect::to($this->routeIndex)->with('warning', __('messages.not_found'));
-            }
-            if ($deleted) {
-                return \Redirect::to($this->routeIndex)->with('message', __('messages.success'));
-            }
-
-            return \Redirect::to($this->routeIndex)->with('error', __('messages.not_modified'));
-        }
-
-        if ($entity) {
-            return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
-        }
-
-        if ($deleted) {
-            return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
-        }
-
-        return response()->json(null, JsonResponse::HTTP_NOT_MODIFIED);
+        return $this->makeResponse($entity);
     }
 
     /**
@@ -322,26 +304,7 @@ class Controller extends \App\Http\Controllers\Controller
     {
         $entity = $this->interface->restore($entityId);
 
-        if (! $this->isAPI) {
-            if (! $entity) {
-                return \Redirect::to($this->routeIndex)->with('warning', __('messages.not_found'));
-            }
-            if ($entity) {
-                return \Redirect::to($this->routeIndex)->with('message', __('messages.success'));
-            }
-
-            return \Redirect::to($this->routeIndex)->with('error', __('messages.not_modified'));
-        }
-
-        if (! $entity) {
-            return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
-        }
-
-        if ($entity) {
-            return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
-        }
-
-        return response()->json(null, JsonResponse::HTTP_NOT_MODIFIED);
+        return $this->makeResponse($entity);
     }
 
     /**
@@ -355,23 +318,40 @@ class Controller extends \App\Http\Controllers\Controller
     {
         $entity = $this->interface->forceDelete($entityId);
 
+        return $this->makeResponse($entity);
+    }
+
+    /**
+     * Make response for web or json.
+     *
+     * @param mixed $entity
+     * @param boolean $appendEntity
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    function makeResponse($entity,$appendEntity = false)
+    {
         if (! $this->isAPI) {
-            if (! $entity) {
-                return \Redirect::to($this->routeIndex)->with('warning', __('messages.not_found'));
-            }
             if ($entity) {
                 return \Redirect::to($this->routeIndex)->with('message', __('messages.success'));
+            }
+
+            if ($entity === null) {
+                return \Redirect::to($this->routeIndex)->with('warning', __('messages.not_found'));
             }
 
             return \Redirect::to($this->routeIndex)->with('error', __('messages.not_modified'));
         }
 
-        if (! $entity) {
-            return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
+        if ($entity) {
+            if($appendEntity)
+                return response()->json(  ['status' => true, 'message' => __('messages.success'), 'data' => $entity],
+                    JsonResponse::HTTP_OK);
+            return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
         }
 
-        if ($entity) {
-            return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
+        if ($entity === null) {
+            return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
         }
 
         return response()->json(null, JsonResponse::HTTP_NOT_MODIFIED);

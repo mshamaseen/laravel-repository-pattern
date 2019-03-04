@@ -220,9 +220,19 @@ abstract class AbstractRepository implements ContractInterface
      */
     public function find($entityId = 0, $columns = ['*'])
     {
-        return $this->model->with($this->with)->select($columns)->where('id', $entityId)->first();
+        return $this->model->with($this->with)->find($entityId,$columns);
     }
 
+    /**
+     * @param $entityId
+     * @param array $columns
+     *
+     * @return Entity
+     */
+    public function findOrFail($entityId = 0, $columns = ['*'])
+    {
+        return $this->model->with($this->with)->findOrFail($entityId,$columns);
+    }
     /**
      * @param array $filter
      * @param array $columns
