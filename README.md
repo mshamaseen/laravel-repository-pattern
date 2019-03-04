@@ -8,13 +8,13 @@ Autogeneration for repository pattern files, This package is aim to generate Con
 
 *Note: if you are using laravel, you should've at least version **5.7**
 
-# Requirement
+## Requirement
 
 This package require the following dependencies:
    "illuminate/console": "^5.7",
    "illuminate/support": "^5.7"
 
-# Install
+## Install
 
 1- Require this package with composer using the following command:
 ```bash
@@ -28,7 +28,7 @@ and select **repository-config**.
 
 Note: this package is aim to be only for development environment.
 
-# Publish stubs
+## Publish stubs
 If you want to have a custom stubs rather than the default ones, you can change the path of the stubs folder in repository config, then run the following command:
 ```bash
 php artisan vendor:publish
@@ -37,14 +37,14 @@ php artisan vendor:publish
 and select **repository-stub**, this will publish all the stub templates to the specified path on repository config.
 Feel free to edit stubs templates.
 
-# How to use
+## How to use
 To generate repository files run the following command:
 ```bash
 php artisan make:repository {Folder/Classname (singular)}
 ```
 where Folder is optional.
 
-# Examples
+## Examples
 
 To generate repository files for product, run the following:
 
@@ -54,5 +54,5 @@ php artisan make:repository Products/Product
 Note: You can use Product instead of Products/Product, this will not make new folder with the class.
 
 
-# License
+## License
 Repository-generator is a free software distributed under the terms of the MIT license.
