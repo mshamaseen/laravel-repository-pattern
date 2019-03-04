@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Repositories\{{modelNamePlural}};
+namespace App\Repositories{{namespace}};
 
-use App\Entities\{{modelNamePlural}}\{{modelName}};
-use App\Interfaces\{{modelNamePlural}}\{{modelName}}Interface;
+use App\Entities{{namespace}}\{{modelName}};
+use App\Interfaces{{namespace}}\{{modelName}}Interface;
 use Shamaseen\Repository\Generator\Utility\AbstractRepository;
 use Illuminate\Container\Container as App;
 /**
  * Class {{modelName}}Repository
- * @package App\Repositories\{{modelNamePlural}}
+ * @package App\Repositories{{namespace}}
  */
 class {{modelName}}Repository extends AbstractRepository implements {{modelName}}Interface
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\{{modelNamePlural}};
+namespace App\Http\Controllers{{namespace}};
 
-use App\Http\Requests\{{modelNamePlural}}\{{modelName}}Request;
-use App\Interfaces\{{modelNamePlural}}\{{modelName}}Interface;
+use App\Http\Requests{{namespace}}\{{modelName}}Request;
+use App\Interfaces{{namespace}}\{{modelName}}Interface;
 use Shamaseen\Repository\Generator\Utility\Controller;
 /**
  * Class {{modelName}}Controller
- * @package App\Http\Controllers\{{modelNamePlural}}
+ * @package App\Http\Controllers{{namespace}}
  */
 class {{modelName}}Controller extends Controller
 {
@@ -49,7 +49,7 @@ class {{modelName}}Controller extends Controller
      */
     public function store()
     {
-        return parent::baseStore();
+        return parent::store();
     }
 
     /**
@@ -82,13 +82,14 @@ class {{modelName}}Controller extends Controller
      */
     public function update($id)
     {
-        return parent::baseUpdate($id);
+        return parent::update($id);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
+     * @throws \Exception
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)

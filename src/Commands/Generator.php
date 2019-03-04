@@ -62,10 +62,10 @@ class Generator extends Command
         $path = implode("/", $file);
 
         if (count($file) == 0) {
-            $this->repoNamespace = $this->repoName;
+            $this->repoNamespace = '';
         } else {
             $this->repoNamespace = $file[count($file) - 1];
-            $this->repoNamespace = implode("\\", $file);
+            $this->repoNamespace = "\\".implode("\\", $file);
         }
         $model= str_plural(\Config::get('repository.model'));
         $interface= str_plural(\Config::get('repository.interface'));
@@ -99,11 +99,10 @@ class Generator extends Command
      */
     protected function generate($path, $folder, $type)
     {
-
         $template = str_replace(
             [
                 '{{modelName}}',
-                "{{modelNamePlural}}"
+                "{{namespace}}"
             ],
             [
                 $this->repoName,
