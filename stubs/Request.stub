@@ -4,7 +4,7 @@ namespace App\Http\Requests{{namespace}};
 
 use Shamaseen\Repository\Generator\Utility\Request;
 /**
- * Class NewsRequest
+ * Class {{modelName}}Request
  * @package App\Http\Requests{{namespace}}
  */
 class {{modelName}}Request extends Request
