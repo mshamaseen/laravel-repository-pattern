@@ -80,7 +80,7 @@ class Generator extends Command
         $this->repoNamespace = stripslashes($this->repoNamespace);
         if($this->repoNamespace)
             $this->repoNamespace = $this->repoNamespace."\\";
-        File::append(\Config::get('repository.route_path') . '/web.php', "\n" . 'Route::resource(\'' . str_plural($this->repoName) . "', '{$this->repoNamespace}{$this->repoName}Controller');");
+        File::append(\Config::get('repository.route_path') . '/web.php', "\n" . 'Route::resource(\'' . strtolower(str_plural($this->repoName)) . "', '{$this->repoNamespace}{$this->repoName}Controller');");
 
     }
 
