@@ -53,7 +53,7 @@ class RepositoryServiceProvider extends ServiceProvider
                 $contractName = "App\\" . str_replace('/', '\\', $contract[0]);
 
                 $repositoryClass = str_replace($interfaces, $repositories, $contractName);
-                $repositoryClass = str_replace($interface, $repository, $repositoryClass);
+                $repositoryClass = str_replace([$interface,'Interface'], $repository, $repositoryClass);
 
                 $this->providers[] = $contractName;
                 $this->bindings[$contractName] = $repositoryClass;
