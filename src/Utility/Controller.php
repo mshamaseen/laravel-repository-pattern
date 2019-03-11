@@ -44,7 +44,7 @@ class Controller extends \App\Http\Controllers\Controller
     /**
      * @var Request
      */
-    private $request;
+    protected $request;
 
     /**
      * BaseController constructor.
@@ -78,6 +78,30 @@ class Controller extends \App\Http\Controllers\Controller
         }
 
         \App::setLocale($language);
+        switch ($language)
+        {
+            case 'ar':
+                $dir = 'rtl';
+                $align = 'right';
+                $dirInverse = 'ltr';
+                $alignInverse = 'left';
+                break;
+
+            case 'en':
+            default:
+                $dir = 'ltr';
+                $align = 'left';
+                $dirInverse = 'rtl';
+                $alignInverse = 'right';
+                break;
+        }
+
+        \View::share('dir', $dir);
+        \View::share('align', $align);
+        \View::share('alignInverse', $alignInverse);
+        \View::share('dirInverse', $dirInverse);
+
+        
         $this->interface = $interface;
         $this->isAPI = $request->expectsJson();
 
