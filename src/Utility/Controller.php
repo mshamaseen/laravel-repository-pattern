@@ -72,6 +72,7 @@ class Controller extends \App\Http\Controllers\Controller
 
         $request->offsetUnset('only-trash');
         $request->offsetUnset('with-trash');
+        $request->offsetUnset('limit');
 
         if ($limit <= $this->maxLimit) {
             $this->limit = $limit;
@@ -101,7 +102,7 @@ class Controller extends \App\Http\Controllers\Controller
         \View::share('alignInverse', $alignInverse);
         \View::share('dirInverse', $dirInverse);
 
-        
+
         $this->interface = $interface;
         $this->isAPI = $request->expectsJson();
 
