@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Interfaces{{namespace}};
+namespace App\{{folder}}\{{path}};
 
 
 use Shamaseen\Repository\Generator\Utility\ContractInterface;
 /**
  * Interface {{modelName}}Interface
- * @package App\Interfaces{{namespace}}
+ * @package App\{{folder}}\{{path}}
  */
 interface {{modelName}}Interface extends ContractInterface
 {

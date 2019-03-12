@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Entities{{namespace}};
+namespace App\{{folder}}\{{path}};
 
 use Shamaseen\Repository\Generator\Utility\Entity;
 /**
  * Class {{modelName}}
- * @package App\Entities\Contents
+ * @package App\{{folder}}
  */
 class {{modelName}} extends Entity
 {

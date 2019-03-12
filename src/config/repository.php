@@ -14,7 +14,5 @@ return [
     'interface' => 'Interface',
     'model' => 'Entity',
     'repository' => 'Repository',
-    'controllers_path' => 'Http/Controllers',
-    'requests_path' => '/Http/Requests/',
 
 ];

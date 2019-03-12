@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers{{namespace}};
+namespace App\{{folder}}\{{path}};
 
-use App\Http\Requests{{namespace}}\{{modelName}}Request;
-use App\Interfaces{{namespace}}\{{modelName}}Interface;
+use App\Http\Requests\{{path}}\{{modelName}}Request;
+use App\{{interfaceBaseFolderName}}\{{path}}\{{modelName}}Interface;
 use Shamaseen\Repository\Generator\Utility\Controller;
 /**
  * Class {{modelName}}Controller
- * @package App\Http\Controllers{{namespace}}
+ * @package App\Http\Controllers\{{path}}
  */
 class {{modelName}}Controller extends Controller
 {
