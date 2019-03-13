@@ -71,7 +71,7 @@ class Generator extends Command
         $this->generate($path, $interface, 'Interface');
         $this->generate($path, $repository, 'Repository');
 
-        File::append(\Config::get('repository.route_path') . '/web.php', "\n" . 'Route::resource(\'' . strtolower(str_plural($this->repoName)) . "', '{$path}\{$this->repoName}Controller');");
+        File::append(\Config::get('repository.route_path') . '/web.php', "\n" . 'Route::resource(\'' . strtolower(str_plural($this->repoName)) . "', '".$path."\\".$this->repoName."Controller');");
     }
 
     /**
