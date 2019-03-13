@@ -55,7 +55,7 @@ class Generator extends Command
      */
     public function handle()
     {
-        $file = preg_split( " (/|\\\\) ", (string)$this->argument('name'));
+        $file = preg_split( " (/|\\\\) ", (string)$this->argument('name')) ?? [];
 
         $this->repoName = $file[count($file) - 1];
         unset($file[count($file) - 1]);
