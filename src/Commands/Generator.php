@@ -59,7 +59,7 @@ class Generator extends Command
 
         $this->repoName = $file[count($file) - 1];
         unset($file[count($file) - 1]);
-        $path = implode("/", $file);
+        $path = implode("\\", $file);
 
         $model= str_plural(\Config::get('repository.model'));
         $interface= str_plural(\Config::get('repository.interface'));
@@ -112,6 +112,7 @@ class Generator extends Command
         );
 
         $folder = str_replace('\\','/',$folder);
+        $path = str_replace('\\','/',$path);
         $filePath = $this->getFolderOrCreate(\Config::get('repository.app_path') . "/{$folder}/{$path}/");
         
         if($type == 'Entity')
