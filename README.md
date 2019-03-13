@@ -26,6 +26,9 @@ php artisan vendor:publish
 ```
 and select **repository-config**.
 
+3- To enable validation messages to be delivereid, You need to move `StartSession` and `ShareErrorsFromSession` from $middlewareGroups in http karnel to $middleware.
+
+
 Note: this package is aim to be only for development environment.
 
 ## Publish stubs
