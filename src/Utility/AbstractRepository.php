@@ -87,9 +87,25 @@ abstract class AbstractRepository implements ContractInterface
         }
 
         if (isset($criteria['search'])) {
-            foreach ($this->model->searchable as $item) {
-                $latest->where($item, 'like', '%' . $criteria['search'] . '%', 'or');
+            foreach ($this->model->searchable as $method => $columns) {
+                if(method_exists($this->model,$method))
+                {
+                    $latest->whereHas($method,function ($query) use ($criteria,$columns)
+                    {
+                        /** @var $query Builder */
+                        $query->where(function ($query2) use($criteria,$columns){
+                            /** @var $query2 Builder */
+                            foreach ((array) $columns as $column)
+                            {
+                                $query2->orWhere($column, 'like', "%" . $criteria['search'] . "%");
+                            }
+                        });
+                    });
+                }
+                else
+                    $latest->where($columns, 'like', "%" . $criteria['search'] . "%", 'or');
             }
+
             unset($criteria['search']);
         }
 
