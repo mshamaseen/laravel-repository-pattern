@@ -42,15 +42,21 @@ class RepositoryServiceProvider extends ServiceProvider
         $interface= Config::get('repository.interface');
         $repository= Config::get('repository.repository');
 
-        $contractsFolder = realpath(__DIR__ . '/../../../../app/' . $interfaces);
+        $contractsFolder = Config::get('repository.app_path').'/'.$interfaces;
+
         if ($contractsFolder) {
             $directory = new \RecursiveDirectoryIterator($contractsFolder);
             $iterator = new \RecursiveIteratorIterator($directory);
             $regex = new \RegexIterator($iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
             foreach ($regex as $name => $value) {
-                $contract = explode('app/', $name);
-                $contract = explode('.php', $contract[1]);
-                $contractName = "App\\" . str_replace('/', '\\', $contract[0]);
+                
+                $contract = strstr($name,'app');
+                $contract = rtrim($contract,'.php');
+                $contract = ltrim($contract,'app');
+                $contract = ltrim($contract,'/');
+                $contract = ltrim($contract,'\\');
+                
+                $contractName = "App\\" . str_replace('/', '\\', $contract);
 
                 $repositoryClass = str_replace($interfaces, $repositories, $contractName);
                 $repositoryClass = str_replace([$interface,'Interface'], $repository, $repositoryClass);
