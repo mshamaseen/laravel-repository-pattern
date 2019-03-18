@@ -52,11 +52,8 @@ class RepositoryServiceProvider extends ServiceProvider
                 
                 $contract = strstr($name,'app');
                 $contract = rtrim($contract,'.php');
-                $contract = ltrim($contract,'app');
-                $contract = ltrim($contract,'/');
-                $contract = ltrim($contract,'\\');
                 
-                $contractName = "App\\" . str_replace('/', '\\', $contract);
+                $contractName = str_replace('/', '\\', ucfirst($contract));
 
                 $repositoryClass = str_replace($interfaces, $repositories, $contractName);
                 $repositoryClass = str_replace([$interface,'Interface'], $repository, $repositoryClass);
