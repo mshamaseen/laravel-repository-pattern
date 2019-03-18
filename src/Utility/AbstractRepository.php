@@ -172,7 +172,7 @@ abstract class AbstractRepository implements ContractInterface
      */
     public function update($entityId = 0, $attributes = [])
     {
-        $item = $this->model->findOrFail('id');
+        $item = $this->model->findOrFail($entityId);
 
         if($item->update($attributes))
         {
