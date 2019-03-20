@@ -50,7 +50,7 @@ class RepositoryServiceProvider extends ServiceProvider
             $regex = new \RegexIterator($iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
             foreach ($regex as $name => $value) {
                 
-                $contract = strstr($name,'app');
+                $contract = strstr($name,'app/') ?: strstr($name,'app\\');
                 $contract = rtrim($contract,'.php');
                 
                 $contractName = str_replace('/', '\\', ucfirst($contract));
