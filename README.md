@@ -6,6 +6,8 @@
 # Repository Generator
 Autogeneration for repository pattern files, This package is aim to generate Contract (interface), Entity (model), Controller, Repository and Request validation files for specified module.
 
+No Need to bind the interface to the repository, it will be auto-bind !
+
 *Note: if you are using laravel, you should've at least version **5.7**
 
 ## Requirement
