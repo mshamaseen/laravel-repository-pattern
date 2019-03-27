@@ -49,7 +49,7 @@ php artisan make:repository {Folder/Classname (singular)}
 ```
 where Folder is optional.
 
-To generate views and languages files just add `--view` option in the command.
+To generate views and languages files just add `--only-view` option in the command.
 
 
 ## Examples
@@ -64,7 +64,7 @@ Note: You can use Product instead of Products/Product, this will not make new fo
 Then generate views and languages files:
 
 ```bash
-php artisan make:repository product --view
+php artisan make:repository product --only-view
 ```
 
 ## License

@@ -17,7 +17,7 @@ class Generator extends Command
      * @var string
      */
     protected $signature = 'make:repository
-    {name : Class (singular) for example User} {--view}';
+    {name : Class (singular) for example User} {--only-view}';
 
     /**
      * The console command description.
@@ -111,7 +111,7 @@ class Generator extends Command
      * @param string $path Class path
      * @param string $folder default path to generate in
      * @param string $type define which kind of files should generate
-     * @return false
+     * @return bool
      */
     protected function generate($path, $folder, $type)
     {
