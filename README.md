@@ -49,6 +49,9 @@ php artisan make:repository {Folder/Classname (singular)}
 ```
 where Folder is optional.
 
+To generate views and languages files just add `--view` option in the command.
+
+
 ## Examples
 
 To generate repository files for product, run the following:
@@ -58,6 +61,11 @@ php artisan make:repository Products/Product
 ```
 Note: You can use Product instead of Products/Product, this will not make new folder with the class.
 
+Then generate views and languages files:
+
+```bash
+php artisan make:repository product --view
+```
 
 ## License
 Repository-generator is a free software distributed under the terms of the MIT license.
