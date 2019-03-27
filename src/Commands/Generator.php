@@ -17,7 +17,7 @@ class Generator extends Command
      * @var string
      */
     protected $signature = 'make:repository
-    {name : Class (singular) for example User} {--only-view}';
+    {name : Class (singular) for example User} {--view}';
 
     /**
      * The console command description.
@@ -68,7 +68,6 @@ class Generator extends Command
 
     function makeRepositoryPatternFiles($file)
     {
-
         unset($file[count($file) - 1]);
         $path = implode("\\", $file);
 
@@ -76,9 +75,9 @@ class Generator extends Command
         $interface= str_plural(\Config::get('repository.interface'));
         $repository= str_plural(\Config::get('repository.repository'));
 
-        $this->generate($path, 'Http\Controllers', 'Controller');
+        $this->generate($path, \Config::get('repository.controllers_folder'), 'Controller');
         $this->generate($path, $model, 'Entity');
-        $this->generate($path, 'Http\Requests', 'Request');
+        $this->generate($path, \Config::get('repository.requests_folder'), 'Request');
         $this->generate($path, $interface, 'Interface');
         $this->generate($path, $repository, 'Repository');
 
@@ -87,6 +86,10 @@ class Generator extends Command
 
     function makeViewsAndLanguage()
     {
+        foreach (\Config::get('repository.languages') as $lang)
+        {
+            $this->generate(lcfirst($this->repoName),\Config::get('repository.lang_path')."/{$lang}" , 'lang');
+        }
         $this->generate(lcfirst($this->repoName),\Config::get('repository.resources_path')."/views" , 'create');
         $this->generate(lcfirst($this->repoName),\Config::get('repository.resources_path')."/views" , 'edit');
         $this->generate(lcfirst($this->repoName),\Config::get('repository.resources_path')."/views" , 'index');
@@ -149,6 +152,15 @@ class Generator extends Command
                 $filePath .= "/";
                 file_put_contents($filePath . "{$this->repoName}.php", $template);
                 break;
+            case 'Controller':
+            case 'Request':
+            case 'Repository':
+            case 'Interface':
+                $filePath = $this->getFolderOrCreate(\Config::get('repository.app_path') . "/{$folder}/{$path}");
+                $filePath = rtrim($filePath,'/');
+                $filePath .= "/";
+                file_put_contents($filePath . "{$this->repoName}{$type}.php", $template);
+                break;
             case 'create':
             case 'edit':
             case 'index':
@@ -158,10 +170,9 @@ class Generator extends Command
                 file_put_contents($filePath . $repoName.".blade.php", $template);
             break;
             default:
-                $filePath = $this->getFolderOrCreate(\Config::get('repository.app_path') . "/{$folder}/{$path}");
-                $filePath = rtrim($filePath,'/');
-                $filePath .= "/";
-                file_put_contents($filePath . "{$this->repoName}{$type}.php", $template);
+                $filePath = $this->getFolderOrCreate($folder)."/";
+                $repoName = lcfirst($this->repoName);
+                file_put_contents($filePath . $repoName.".php", $template);
         }
         return true;
     }
