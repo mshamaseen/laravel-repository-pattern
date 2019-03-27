@@ -17,7 +17,7 @@ class Generator extends Command
      * @var string
      */
     protected $signature = 'make:repository
-    {name : Class (singular) for example User}';
+    {name : Class (singular) for example User} {--only-view}';
 
     /**
      * The console command description.
@@ -56,8 +56,19 @@ class Generator extends Command
     public function handle()
     {
         $file = preg_split( " (/|\\\\) ", (string)$this->argument('name')) ?? [];
-
         $this->repoName = $file[count($file) - 1];
+        if($this->option('only-view'))
+        {
+            $this->makeViewsAndLanguage();
+            return null;
+        }
+
+        $this->makeRepositoryPatternFiles($file);
+    }
+
+    function makeRepositoryPatternFiles($file)
+    {
+
         unset($file[count($file) - 1]);
         $path = implode("\\", $file);
 
@@ -74,6 +85,14 @@ class Generator extends Command
         File::append(\Config::get('repository.route_path') . '/web.php', "\n" . 'Route::resource(\'' . strtolower(str_plural($this->repoName)) . "', '".$path."\\".$this->repoName."Controller');");
     }
 
+    function makeViewsAndLanguage()
+    {
+        $this->generate(lcfirst($this->repoName),\Config::get('repository.resources_path')."/views" , 'create');
+        $this->generate(lcfirst($this->repoName),\Config::get('repository.resources_path')."/views" , 'edit');
+        $this->generate(lcfirst($this->repoName),\Config::get('repository.resources_path')."/views" , 'index');
+        $this->generate(lcfirst($this->repoName),\Config::get('repository.resources_path')."/views" , 'show');
+    }
+
     /**
      * Get stub content to generate needed files
      *
@@ -82,16 +101,25 @@ class Generator extends Command
      */
     protected function getStub($type)
     {
-        return file_get_contents(\Config::get('repository.resources_path') . "/$type.stub");
+        return file_get_contents(\Config::get('repository.stubs_path') . "/$type.stub");
     }
 
     /**
      * @param string $path Class path
      * @param string $folder default path to generate in
      * @param string $type define which kind of files should generate
+     * @return false
      */
     protected function generate($path, $folder, $type)
     {
+        $content = $this->getStub($type);
+
+        if($content === false)
+        {
+            echo 'file '.$type.".stub is not exist !";
+            return false;
+        }
+
         $template = str_replace(
             [
                 '{{modelName}}',
@@ -106,23 +134,36 @@ class Generator extends Command
                 $path,
                 str_plural(\Config::get('repository.model','Entity')),
                 str_plural(\Config::get('repository.interface','Interface')),
-
             ],
             $this->getStub($type)
         );
 
         $folder = str_replace('\\','/',$folder);
         $path = str_replace('\\','/',$path);
-        $filePath = $this->getFolderOrCreate(\Config::get('repository.app_path') . "/{$folder}/{$path}/");
         
-        if($type == 'Entity')
+        switch ($type)
         {
-            file_put_contents($filePath . "{$this->repoName}.php", $template);
-        }else
-        {
-            file_put_contents($filePath . "{$this->repoName}{$type}.php", $template);
+            case 'Entity':
+                $filePath = $this->getFolderOrCreate(\Config::get('repository.app_path') . "/{$folder}/{$path}");
+                $filePath = rtrim($filePath,'/');
+                $filePath .= "/";
+                file_put_contents($filePath . "{$this->repoName}.php", $template);
+                break;
+            case 'create':
+            case 'edit':
+            case 'index':
+            case 'show':
+                $filePath = $this->getFolderOrCreate($folder."/".str_plural($path))."/";
+                $repoName = lcfirst($type);
+                file_put_contents($filePath . $repoName.".blade.php", $template);
+            break;
+            default:
+                $filePath = $this->getFolderOrCreate(\Config::get('repository.app_path') . "/{$folder}/{$path}");
+                $filePath = rtrim($filePath,'/');
+                $filePath .= "/";
+                file_put_contents($filePath . "{$this->repoName}{$type}.php", $template);
         }
-
+        return true;
     }
 
     /**
