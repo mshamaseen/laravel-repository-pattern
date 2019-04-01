@@ -8,7 +8,6 @@
 
 namespace Shamaseen\Repository\Generator\Utility;
 
-
 use Illuminate\Container\Container as App;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -74,7 +73,7 @@ abstract class AbstractRepository implements ContractInterface
 
     /**
      * @param array $criteria
-     * @return Entity
+     * @return Builder
      */
     public function filter($criteria = [])
     {
@@ -105,9 +104,8 @@ abstract class AbstractRepository implements ContractInterface
                 else
                     $latest->where($columns, 'like', "%" . $criteria['search'] . "%", 'or');
             }
-
-            unset($criteria['search']);
         }
+        unset($criteria['search']);
 
 
         if ($this->trash) {
@@ -168,7 +166,7 @@ abstract class AbstractRepository implements ContractInterface
      * @param $entityId
      * @param array $attributes
      *
-     * @return BaseEntity|bool
+     * @return bool|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|Entity|Entity[]
      */
     public function update($entityId = 0, $attributes = [])
     {
