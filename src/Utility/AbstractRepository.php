@@ -89,7 +89,7 @@ abstract class AbstractRepository implements ContractInterface
             foreach ($this->model->searchable as $method => $columns) {
                 if(method_exists($this->model,$method))
                 {
-                    $latest->whereHas($method,function ($query) use ($criteria,$columns)
+                    $latest->orWhereHas($method,function ($query) use ($criteria,$columns)
                     {
                         /** @var $query Builder */
                         $query->where(function ($query2) use($criteria,$columns){
@@ -102,7 +102,7 @@ abstract class AbstractRepository implements ContractInterface
                     });
                 }
                 else
-                    $latest->where($columns, 'like', "%" . $criteria['search'] . "%", 'or');
+                    $latest->orWhere($columns, 'like', "%" . $criteria['search'] . "%", 'or');
             }
         }
         unset($criteria['search']);
