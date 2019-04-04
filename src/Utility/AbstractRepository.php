@@ -107,7 +107,6 @@ abstract class AbstractRepository implements ContractInterface
         }
         unset($criteria['search']);
 
-
         if ($this->trash) {
             $latest->onlyTrashed();
         }
