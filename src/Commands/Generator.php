@@ -171,6 +171,7 @@ class Generator extends Command
         $template = str_replace(
             [
                 '{{modelName}}',
+                '{{lcPluralModelName}}',
                 "{{folder}}",
                 "{{path}}",
                 "{{modelBaseFolderName}}",
@@ -179,6 +180,7 @@ class Generator extends Command
             ],
             [
                 $this->repoName,
+                str_plural(lcfirst($this->repoName)),
                 str_plural($folder),
                 $path,
                 str_plural(\Config::get('repository.model','Entity')),

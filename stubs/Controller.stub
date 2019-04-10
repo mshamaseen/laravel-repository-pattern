@@ -12,6 +12,16 @@ use Shamaseen\Repository\Generator\Utility\Controller;
 class {{modelName}}Controller extends Controller
 {
 
+    protected $routeIndex = '{{lcPluralModelName}}.index';
+
+    protected $pageTitle = '{{modelName}}';
+    protected $createRoute = '{{lcPluralModelName}}.create';
+
+    protected $viewIndex = '{{lcPluralModelName}}.index';
+    protected $viewCreate = '{{lcPluralModelName}}.create';
+    protected $viewEdit = '{{lcPluralModelName}}.edit';
+    protected $viewShow = '{{lcPluralModelName}}.show';
+
     /**
      * {{modelName}}Controller constructor.
      * @param {{modelName}}Interface $interface
