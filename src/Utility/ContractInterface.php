@@ -9,8 +9,7 @@
 namespace Shamaseen\Repository\Generator\Utility;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Collection;
+use \Illuminate\Contracts\Pagination\Paginator;
 
 /**
  * Interface EloquentInterface.
@@ -20,7 +19,7 @@ interface ContractInterface
     /**
      * @param array $columns
      *
-     * @return Collection|Entity[]
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     public function all($columns = ['*']);
 
@@ -35,7 +34,7 @@ interface ContractInterface
      * @param array $data
      * @param $entityId
      *
-     * @return BaseEntity|bool
+     * @return Entity|\Illuminate\Database\Eloquent\Model|bool
      */
     public function update($entityId, $data = []);
 
@@ -52,7 +51,7 @@ interface ContractInterface
      * @param $entityId
      * @param array $columns
      *
-     *  @return Entity
+     *  @return Entity|\Illuminate\Database\Eloquent\Model
      */
     public function find($entityId, $columns = ['*']);
 
@@ -60,7 +59,7 @@ interface ContractInterface
      * @param $entityId
      * @param array $columns
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @return Entity
+     * @return Entity|\Illuminate\Database\Eloquent\Model
      */
     public function findOrFail($entityId = 0, $columns = ['*']);
 
@@ -68,7 +67,7 @@ interface ContractInterface
      * @param array $criteria
      * @param array $columns
      *
-     *  @return Entity
+     *  @return Entity|\Illuminate\Database\Eloquent\Model
      */
     public function findBy($criteria = [], $columns = ['*']);
 
@@ -108,30 +107,27 @@ interface ContractInterface
      * @param array $filter
      * @param array $columns
      *
-     *  @return Entity
+     *  @return Entity|\Illuminate\Database\Eloquent\Model
      */
     public function first($filter = [], $columns = ['*']);
 
     /**
      * @param array $data
-     *
-     * Entity|\Illuminate\Database\Eloquent\Model
-     *
-     * @return Entity
+     * @return Entity|\Illuminate\Database\Eloquent\Model
      */
     public function create($data = []);
 
     /**
      * @param array $data
      *
-     * @return Entity
+     * @return Entity|\Illuminate\Database\Eloquent\Model
      */
     public function createOrFirst($data = []);
 
     /**
      * @param array $data
      *
-     * @return Entity
+     * @return Entity|\Illuminate\Database\Eloquent\Model
      */
     public function createOrUpdate($data = []);
 

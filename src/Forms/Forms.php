@@ -50,18 +50,15 @@ abstract class Forms
             case "float":
             case "double":
                 return 'number';
-                break;
 
             case "time":
                 return 'time';
-                break;
 
             case "date":
             case "datetime":
             case "timestamp":
             case "year":
                 return 'date';
-                break;
 
             case "boolean":
             case "bool":
@@ -70,7 +67,6 @@ abstract class Forms
             case "text":
             default:
                 return 'text';
-                break;
         }
     }
 

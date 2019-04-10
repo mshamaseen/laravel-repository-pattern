@@ -27,7 +27,8 @@ class GeneratorServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__.'/config' => realpath('config'),
-        ],'repository-config');
+            __DIR__.'/lang' => \Config::get('repository.lang_path')."/en",
+        ],'repository-generator');
 
         if ($this->app['config']->get('repository') === null) {
             $this->app['config']->set('repository', require __DIR__.'/config/repository.php');

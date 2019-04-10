@@ -160,7 +160,7 @@ class Controller extends \App\Http\Controllers\Controller
             \View::share('pageTitle', 'Create '.$this->pageTitle.' | '.\Config::get('app.name'));
             $this->breadcrumbs->put('create', [
                 'link' => $this->createRoute,
-                'text' => trans('common/others.create'),
+                'text' => trans('repository-generator.create'),
             ]);
 
             return view($this->viewCreate, $this->params);
@@ -192,12 +192,12 @@ class Controller extends \App\Http\Controllers\Controller
         $entity = $this->interface->find($entityId);
         if (! $this->isAPI) {
             if (! $entity) {
-                return \Redirect::to($this->routeIndex)->with('warning', __('messages.not_found'));
+                return \Redirect::to($this->routeIndex)->with('warning', __('repository-generator.not_found'));
             }
             \View::share('pageTitle', 'View '.$this->pageTitle.' | '.\Config::get('app.name'));
             $this->breadcrumbs->put('view', [
                 'link' => '',
-                'text' => $entity->name ?? $entity->title ?? __('messages.view'),
+                'text' => __('repository-generator.show'),
             ]);
 
             return view($this->viewShow, $this->params)
@@ -208,7 +208,7 @@ class Controller extends \App\Http\Controllers\Controller
         }
 
         return response()->json(
-            ['status' => true, 'message' => __('messages.success'), 'data' => $entity],
+            ['status' => true, 'message' => __('repository-generator.success'), 'data' => $entity],
             JsonResponse::HTTP_OK
         );
     }
@@ -225,11 +225,11 @@ class Controller extends \App\Http\Controllers\Controller
         $entity = $this->interface->find($entityId);
         if (! $this->isAPI) {
             if (! $entity) {
-                return \Redirect::to($this->routeIndex)->with('warning', __('messages.not_found'));
+                return \Redirect::to($this->routeIndex)->with('warning', __('repository-generator.not_found'));
             }
             $this->breadcrumbs->put('edit', [
                 'link' => '',
-                'text' => $entity->name ?? $entity->title ?? __('messages.view'),
+                'text' => __('repository-generator.edit'),
             ]);
 
             return view($this->viewEdit, $this->params)
@@ -308,19 +308,19 @@ class Controller extends \App\Http\Controllers\Controller
     {
         if (! $this->isAPI) {
             if ($entity) {
-                return \Redirect::to($this->routeIndex)->with('message', __('messages.success'));
+                return \Redirect::to($this->routeIndex)->with('message', __('repository-generator.success'));
             }
 
             if ($entity === null) {
-                return \Redirect::to($this->routeIndex)->with('warning', __('messages.not_found'));
+                return \Redirect::to($this->routeIndex)->with('warning', __('repository-generator.not_found'));
             }
 
-            return \Redirect::to($this->routeIndex)->with('error', __('messages.not_modified'));
+            return \Redirect::to($this->routeIndex)->with('error', __('repository-generator.not_modified'));
         }
 
         if ($entity) {
             if($appendEntity)
-                return response()->json(  ['status' => true, 'message' => __('messages.success'), 'data' => $entity],
+                return response()->json(  ['status' => true, 'message' => __('repository-generator.success'), 'data' => $entity],
                     JsonResponse::HTTP_OK);
             return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
         }

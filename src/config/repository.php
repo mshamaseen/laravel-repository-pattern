@@ -11,6 +11,7 @@ return [
     'resources_path' => realpath(__DIR__.'/../vendor/shamaseen/repository-generator/stubs'),
     'stubs_path' => realpath('resources')."/stubs",
     'lang_path' => realpath('resources')."/lang",
+    'config_path' => realpath('config'),
 
     //relative to app path
     'interface' => 'Interface',

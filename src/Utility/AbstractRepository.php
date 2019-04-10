@@ -102,7 +102,7 @@ abstract class AbstractRepository implements ContractInterface
                     });
                 }
                 else
-                    $latest->orWhere($columns, 'like', "%" . $criteria['search'] . "%", 'or');
+                    $latest->orWhere($columns, 'like', "%" . $criteria['search'] . "%");
             }
         }
         unset($criteria['search']);
@@ -165,7 +165,7 @@ abstract class AbstractRepository implements ContractInterface
      * @param $entityId
      * @param array $attributes
      *
-     * @return bool|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|Entity|Entity[]
+     * @return bool|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|Entity
      */
     public function update($entityId = 0, $attributes = [])
     {
@@ -207,7 +207,7 @@ abstract class AbstractRepository implements ContractInterface
     /**
      * @param array $columns
      *
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     public function all($columns = ['*'])
     {
@@ -230,7 +230,7 @@ abstract class AbstractRepository implements ContractInterface
      * @param $entityId
      * @param array $columns
      *
-     * @return Entity
+     * @return Entity|\Illuminate\Database\Eloquent\Model
      */
     public function find($entityId = 0, $columns = ['*'])
     {
@@ -241,7 +241,7 @@ abstract class AbstractRepository implements ContractInterface
      * @param $entityId
      * @param array $columns
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @return Entity
+     * @return Entity|\Illuminate\Database\Eloquent\Model
      */
     public function findOrFail($entityId = 0, $columns = ['*'])
     {
@@ -251,7 +251,7 @@ abstract class AbstractRepository implements ContractInterface
      * @param array $filter
      * @param array $columns
      *
-     * @return Entity
+     * @return Entity|\Illuminate\Database\Eloquent\Model
      */
     public function first($filter = [], $columns = ['*'])
     {
@@ -262,7 +262,7 @@ abstract class AbstractRepository implements ContractInterface
      * @param $haystack
      * @param $needle
      *
-     * @return Entity[]|\Illuminate\Database\Eloquent\Collection
+     * @return Entity[]|\Illuminate\Database\Eloquent\Model[]|\Illuminate\Database\Eloquent\Collection
      */
     public function search($haystack, $needle)
     {
@@ -274,7 +274,7 @@ abstract class AbstractRepository implements ContractInterface
      * @param $criteria
      * @param array $columns
      *
-     * @return Entity
+     * @return Entity|\Illuminate\Database\Eloquent\Model
      */
     public function findBy($criteria = [], $columns = ['*'])
     {
