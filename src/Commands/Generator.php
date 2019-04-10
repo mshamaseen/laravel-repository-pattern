@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
 use ReflectionClass;
-use Shamaseen\Repository\Generator\Forms\formGenerator;
+use Shamaseen\Repository\Generator\Forms\FormGenerator;
 
 /**
  * Class RepositoryGenerator
@@ -41,7 +41,7 @@ class Generator extends Command
      * @var string
      */
     protected $repoNamespace;
-    private $formGenerator;
+    private $FormGenerator;
 
     /**
      * Create a new command instance.
@@ -50,7 +50,7 @@ class Generator extends Command
     public function __construct()
     {
         parent::__construct();
-        $this->formGenerator = new formGenerator();
+        $this->FormGenerator = new FormGenerator();
     }
 
     /**
@@ -61,6 +61,9 @@ class Generator extends Command
     public function handle()
     {
         $file = preg_split( " (/|\\\\) ", (string)$this->argument('name')) ?? [];
+
+        if(!$file) return "Something wrong with the inputs !";
+
         $this->repoName = $file[count($file) - 1];
 
         unset($file[count($file) - 1]);
@@ -102,8 +105,8 @@ class Generator extends Command
         $editHtml = '';
         if($entity instanceof Model)
         {
-            $createHtml = $this->formGenerator->generateForm($entity);
-            $editHtml = $this->formGenerator->generateForm($entity,'put');
+            $createHtml = $this->FormGenerator->generateForm($entity);
+            $editHtml = $this->FormGenerator->generateForm($entity,'put');
         }
         else
         {

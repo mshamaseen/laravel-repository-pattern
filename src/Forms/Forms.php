@@ -36,10 +36,8 @@ abstract class Forms
         {
             case "email":
                 return 'email';
-                break;
             case "password":
                 return "password";
-                break;
         }
 
         switch ($this->column->getType())

@@ -13,7 +13,7 @@ use DB;
 use Doctrine\DBAL\Schema\Column;
 use Illuminate\Database\Eloquent\Model;
 
-class formGenerator
+class FormGenerator
 {
     private $inputs;
 
@@ -42,24 +42,19 @@ class formGenerator
             case "float":
             case "double":
                 return new Input($column);
-                break;
             case "enum":
                 return new Input($column);
-                break;
             case "date":
             case "datetime":
             case "timestamp":
             case "time":
             case "year":
                 return new Input($column);
-                break;
             case "text":
                 return new TextArea($column);
-                break;
             case "boolean":
             case "bool":
                 return new Input($column);
-                break;
             case "varchat":
             default:
                 return new Input($column);
