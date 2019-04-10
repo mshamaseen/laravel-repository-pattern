@@ -3,7 +3,10 @@
 namespace Shamaseen\Repository\Generator\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
+use ReflectionClass;
+use Shamaseen\Repository\Generator\Forms\formGenerator;
 
 /**
  * Class RepositoryGenerator
@@ -38,6 +41,7 @@ class Generator extends Command
      * @var string
      */
     protected $repoNamespace;
+    private $formGenerator;
 
     /**
      * Create a new command instance.
@@ -46,31 +50,33 @@ class Generator extends Command
     public function __construct()
     {
         parent::__construct();
+        $this->formGenerator = new formGenerator();
     }
 
     /**
      * Execute the console command.
      *
-
+     * @throws \ReflectionException
      */
     public function handle()
     {
         $file = preg_split( " (/|\\\\) ", (string)$this->argument('name')) ?? [];
         $this->repoName = $file[count($file) - 1];
-        if($this->option('only-view'))
-        {
-            $this->makeViewsAndLanguage();
-            return null;
-        }
 
-        $this->makeRepositoryPatternFiles($file);
-    }
-
-    function makeRepositoryPatternFiles($file)
-    {
         unset($file[count($file) - 1]);
         $path = implode("\\", $file);
 
+        if($this->option('only-view'))
+        {
+            $this->makeViewsAndLanguage($path);
+            return null;
+        }
+
+        $this->makeRepositoryPatternFiles($path);
+    }
+
+    function makeRepositoryPatternFiles($path)
+    {
         $model= str_plural(\Config::get('repository.model'));
         $interface= str_plural(\Config::get('repository.interface'));
         $repository= str_plural(\Config::get('repository.repository'));
@@ -84,16 +90,54 @@ class Generator extends Command
         File::append(\Config::get('repository.route_path') . '/web.php', "\n" . 'Route::resource(\'' . strtolower(str_plural($this->repoName)) . "', '".$path."\\".$this->repoName."Controller');");
     }
 
-    function makeViewsAndLanguage()
+    /**
+     * @param $path
+     * @throws \ReflectionException
+     */
+    function makeViewsAndLanguage($path)
     {
+        $entity = $this->getEntity($path);
+
+        $createHtml = '';
+        $editHtml = '';
+        if($entity instanceof Model)
+        {
+            $createHtml = $this->formGenerator->generateForm($entity);
+            $editHtml = $this->formGenerator->generateForm($entity,'put');
+        }
+        else
+        {
+            if(!$this->confirm('There is no entity for '.$this->repoName.", do you want to continue (this will disable form generator) ?"))
+            {
+                echo "Dispatch ..";
+                die;
+            }
+        }
+
         foreach (\Config::get('repository.languages') as $lang)
         {
             $this->generate(lcfirst($this->repoName),\Config::get('repository.lang_path')."/{$lang}" , 'lang');
         }
-        $this->generate(lcfirst($this->repoName),\Config::get('repository.resources_path')."/views" , 'create');
-        $this->generate(lcfirst($this->repoName),\Config::get('repository.resources_path')."/views" , 'edit');
+        $this->generate(lcfirst($this->repoName),\Config::get('repository.resources_path')."/views" , 'create',$createHtml);
+        $this->generate(lcfirst($this->repoName),\Config::get('repository.resources_path')."/views" , 'edit',$editHtml);
         $this->generate(lcfirst($this->repoName),\Config::get('repository.resources_path')."/views" , 'index');
         $this->generate(lcfirst($this->repoName),\Config::get('repository.resources_path')."/views" , 'show');
+    }
+
+    /**
+     * @param $path
+     * @return bool|Model|object
+     * @throws \ReflectionException
+     */
+    function getEntity($path)
+    {
+        $myClass = 'App\Entities\\'.$path."\\".$this->repoName;
+        if(!class_exists($myClass))
+            return false;
+
+        $refl = new ReflectionClass($myClass);
+
+        return $refl->newInstance();
     }
 
     /**
@@ -111,9 +155,10 @@ class Generator extends Command
      * @param string $path Class path
      * @param string $folder default path to generate in
      * @param string $type define which kind of files should generate
+     * @param string $form
      * @return bool
      */
-    protected function generate($path, $folder, $type)
+    protected function generate($path, $folder, $type,$form ='')
     {
         $content = $this->getStub($type);
 
@@ -130,6 +175,7 @@ class Generator extends Command
                 "{{path}}",
                 "{{modelBaseFolderName}}",
                 "{{interfaceBaseFolderName}}",
+                "{{form}}",
             ],
             [
                 $this->repoName,
@@ -137,6 +183,7 @@ class Generator extends Command
                 $path,
                 str_plural(\Config::get('repository.model','Entity')),
                 str_plural(\Config::get('repository.interface','Interface')),
+                $form
             ],
             $this->getStub($type)
         );

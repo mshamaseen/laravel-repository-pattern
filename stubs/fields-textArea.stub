@@ -1,0 +1,5 @@
+
+<div class="form-group">
+    <label for="{{columnName}}">{{label}}</label>
+    <textarea {{required}} class="form-control" id="exampleFormControlTextarea1" id="{{columnName}}" name="{{columnName}}">{{old('{{columnName}}',$entity ? $entity->{{columnName}} : "")}}</textarea>
+</div>

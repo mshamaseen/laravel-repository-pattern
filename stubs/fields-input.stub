@@ -1,0 +1,5 @@
+
+<div class="form-group">
+    <label for="{{columnName}}">{{label}}</label>
+    <input type="{{type}}" class="form-control" id="{{columnName}}" name="{{columnName}}" value="{{old('{{columnName}}',$entity ? $entity->{{columnName}} : "")}}" {{required}} >
+</div>
