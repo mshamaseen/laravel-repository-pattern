@@ -139,10 +139,11 @@ class Controller extends \App\Http\Controllers\Controller
                 ->with('createRoute', $this->createRoute)
                 ->with('filters', $this->request->all());
         }
+
         if ($data->hasMorePages()) {
             return response()->json($data, JsonResponse::HTTP_PARTIAL_CONTENT);
         }
-        if (0 == $data->count()) {
+        if ($data->isEmpty()) {
             return response()->json($data, JsonResponse::HTTP_REQUESTED_RANGE_NOT_SATISFIABLE);
         }
 
