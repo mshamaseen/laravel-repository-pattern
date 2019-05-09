@@ -163,6 +163,7 @@ class Generator extends Command
      */
     protected function generate($path, $folder, $type,$form ='')
     {
+        $path = $path ? "\\".$path : "";
         $content = $this->getStub($type);
 
         if($content === false)

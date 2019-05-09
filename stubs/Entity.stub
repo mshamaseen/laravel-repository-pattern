@@ -1,6 +1,6 @@
 <?php
 
-namespace App\{{folder}}\{{path}};
+namespace App\{{folder}}{{path}};
 
 use Shamaseen\Repository\Generator\Utility\Entity;
 /**

@@ -18,8 +18,8 @@ return [
     'model' => 'Entity',
     'repository' => 'Repository',
 
-    'controllers_folder' => 'Http/Controllers',
-    'requests_folder' => 'Http/Requests',
+    'controllers_folder' => 'Http\Controllers',
+    'requests_folder' => 'Http\Requests',
 
 
     'languages' => [

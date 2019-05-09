@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\{{path}};
+namespace App\{{folder}}{{path}};
 
 use Shamaseen\Repository\Generator\Utility\Request;
 /**
  * Class {{modelName}}Request
- * @package App\Http\Requests\{{path}}
+ * @package App\Http\Requests{{path}}
  */
 class {{modelName}}Request extends Request
 {
