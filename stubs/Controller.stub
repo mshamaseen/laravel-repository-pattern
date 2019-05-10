@@ -8,6 +8,7 @@ use Shamaseen\Repository\Generator\Utility\Controller;
 /**
  * Class {{modelName}}Controller
  * @package App\Http\Controllers{{path}}
+ * @property-read {{modelName}}Interface $interface
  */
 class {{modelName}}Controller extends Controller
 {
