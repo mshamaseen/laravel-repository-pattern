@@ -9,6 +9,7 @@ use Illuminate\Container\Container as App;
 /**
  * Class {{modelName}}Repository
  * @package App\Repositories{{path}}
+ * @property-read {{modelName}} $model
  */
 class {{modelName}}Repository extends AbstractRepository implements {{modelName}}Interface
 {
