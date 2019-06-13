@@ -26,7 +26,7 @@ composer require --dev shamaseen/repository-generator
 ```bash
 php artisan vendor:publish
 ```
-and select **repository-config**.
+and select **repository-generator**.
 
 3- To enable validation messages to be delivereid, You need to move `StartSession` and `ShareErrorsFromSession` from $middlewareGroups in http karnel to $middleware.
 

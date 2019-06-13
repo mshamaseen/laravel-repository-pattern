@@ -44,7 +44,7 @@ class RepositoryServiceProvider extends ServiceProvider
 
         $contractsFolder = Config::get('repository.app_path').'/'.$interfaces;
 
-        if ($contractsFolder) {
+        if (is_dir($contractsFolder)) {
             $directory = new \RecursiveDirectoryIterator($contractsFolder);
             $iterator = new \RecursiveIteratorIterator($directory);
             $regex = new \RegexIterator($iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);

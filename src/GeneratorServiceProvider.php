@@ -26,8 +26,7 @@ class GeneratorServiceProvider extends ServiceProvider
         }
 
         $this->publishes([
-            __DIR__.'/config' => realpath('config'),
-            __DIR__.'/lang' => \Config::get('repository.lang_path')."/en",
+            __DIR__.'/config' => realpath('config')
         ],'repository-generator');
 
         if ($this->app['config']->get('repository') === null) {
@@ -36,6 +35,7 @@ class GeneratorServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/config/repository.php', 'repository-config');
         $this->publishes([
             realpath(__DIR__ . '/../stubs') => \Config::get('repository.resources_path',realpath(__DIR__.'/../../../../resources/')),
+            __DIR__.'/lang' => \Config::get('repository.lang_path')."/en",
         ],'repository-stub');
     }
 
