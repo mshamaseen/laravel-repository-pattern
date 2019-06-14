@@ -75,7 +75,7 @@ class Generator extends Command
         if ($this->option('only-view')) {
             $this->makeViewsAndLanguage($path);
 
-            return null;
+            return true;
         }
 
         return $this->makeRepositoryPatternFiles($path);
@@ -100,6 +100,7 @@ class Generator extends Command
         $webContent = "\nRoute::resource('{$pluralName}', '{$controllerPath}');";
 
         File::append($webFile, $webContent);
+        return true;
     }
 
     /**
