@@ -3,10 +3,12 @@
  * Created by PhpStorm.
  * User: shanmaseen
  * Date: 09/04/19
- * Time: 12:02 م
+ * Time: 12:02 م.
  */
+
 namespace Shamaseen\Repository\Generator\Forms;
 
+use Config;
 use Doctrine\DBAL\Schema\Column;
 
 abstract class Forms
@@ -20,6 +22,7 @@ abstract class Forms
 
     /**
      * Forms constructor.
+     *
      * @param Column $column
      */
     public function __construct($column)
@@ -27,51 +30,48 @@ abstract class Forms
         $this->column = $column;
     }
 
-    abstract function template();
+    abstract public function template();
 
-    function getType()
+    public function getType()
     {
-
-        switch ($this->column->getName())
-        {
-            case "email":
+        switch ($this->column->getName()) {
+            case 'email':
                 return 'email';
-            case "password":
-                return "password";
+            case 'password':
+                return 'password';
         }
 
-        switch ($this->column->getType())
-        {
-            case "integer":
-            case "int":
-            case "mediumint":
-            case "bigint":
-            case "decimal":
-            case "float":
-            case "double":
+        switch ($this->column->getType()) {
+            case 'integer':
+            case 'int':
+            case 'mediumint':
+            case 'bigint':
+            case 'decimal':
+            case 'float':
+            case 'double':
                 return 'number';
 
-            case "time":
+            case 'time':
                 return 'time';
 
-            case "date":
-            case "datetime":
-            case "timestamp":
-            case "year":
+            case 'date':
+            case 'datetime':
+            case 'timestamp':
+            case 'year':
                 return 'date';
 
-            case "boolean":
-            case "bool":
-            case "varchat":
-            case "enum":
-            case "text":
+            case 'boolean':
+            case 'bool':
+            case 'varchat':
+            case 'enum':
+            case 'text':
             default:
                 return 'text';
         }
     }
 
-    function getFormStub($type)
+    public function getFormStub($type)
     {
-        return file_get_contents(\Config::get('repository.stubs_path') . "/fields-".$type.".stub");
+        return file_get_contents(Config::get('repository.stubs_path').'/fields-'.$type.'.stub');
     }
 }

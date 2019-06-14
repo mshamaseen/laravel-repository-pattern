@@ -8,8 +8,15 @@
 
 namespace Shamaseen\Repository\Generator\Utility;
 
+use App;
+use Config;
+use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
+use Redirect;
+use View;
 
 /**
  * Class BaseController.
@@ -58,7 +65,7 @@ class Controller extends \App\Http\Controllers\Controller
         $this->breadcrumbs = new Collection();
 
         $language = $request->header('Language', 'en');
-        if (! in_array($language, \Config::get('app.locales', []))) {
+        if (! in_array($language, Config::get('app.locales', []))) {
             $language = 'en';
         }
         $limit = $request->get('limit', 10);
@@ -78,9 +85,8 @@ class Controller extends \App\Http\Controllers\Controller
             $this->limit = $limit;
         }
 
-        \App::setLocale($language);
-        switch ($language)
-        {
+        App::setLocale($language);
+        switch ($language) {
             case 'ar':
                 $dir = 'rtl';
                 $align = 'right';
@@ -97,11 +103,10 @@ class Controller extends \App\Http\Controllers\Controller
                 break;
         }
 
-        \View::share('dir', $dir);
-        \View::share('align', $align);
-        \View::share('alignInverse', $alignInverse);
-        \View::share('dirInverse', $dirInverse);
-
+        View::share('dir', $dir);
+        View::share('align', $align);
+        View::share('alignInverse', $alignInverse);
+        View::share('dirInverse', $dirInverse);
 
         $this->interface = $interface;
         $this->isAPI = $request->expectsJson();
@@ -109,11 +114,11 @@ class Controller extends \App\Http\Controllers\Controller
         if (! $this->isAPI) {
             $this->breadcrumbs = new Collection();
             $this->search = new Collection();
-            \View::share('pageTitle', $this->pageTitle.' | '.\Config::get('app.name'));
-            \View::share('breadcrumbs', $this->breadcrumbs);
-            \View::share('menu', $this->menu);
-            \View::share('search', $this->search);
-            \View::share('selectedMenu', $this->selectedMenu);
+            View::share('pageTitle', $this->pageTitle.' | '.Config::get('app.name'));
+            View::share('breadcrumbs', $this->breadcrumbs);
+            View::share('menu', $this->menu);
+            View::share('search', $this->search);
+            View::share('selectedMenu', $this->selectedMenu);
         }
         $this->request = $request;
     }
@@ -122,13 +127,13 @@ class Controller extends \App\Http\Controllers\Controller
      * Display a listing of the resource.
      *
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
         $data = $this->interface->simplePaginate($this->limit, $this->request->all());
         if (! $this->isAPI) {
-            \View::share('pageTitle', 'List '.$this->pageTitle.' | '.\Config::get('app.name'));
+            View::share('pageTitle', 'List '.$this->pageTitle.' | '.Config::get('app.name'));
             $this->breadcrumbs->put('index', [
                 'link' => $this->routeIndex,
                 'text' => $this->pageTitle,
@@ -153,12 +158,12 @@ class Controller extends \App\Http\Controllers\Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
         if (! $this->isAPI) {
-            \View::share('pageTitle', 'Create '.$this->pageTitle.' | '.\Config::get('app.name'));
+            View::share('pageTitle', 'Create '.$this->pageTitle.' | '.Config::get('app.name'));
             $this->breadcrumbs->put('create', [
                 'link' => $this->createRoute,
                 'text' => trans('repository-generator.create'),
@@ -173,12 +178,13 @@ class Controller extends \App\Http\Controllers\Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Http\RedirectResponse|mixed
+     * @return RedirectResponse|mixed
      */
     public function store()
     {
         $entity = $this->interface->create($this->request->except(['_token', '_method']));
-        return $this->makeResponse($entity,true);
+
+        return $this->makeResponse($entity, true);
     }
 
     /**
@@ -186,16 +192,16 @@ class Controller extends \App\Http\Controllers\Controller
      *
      * @param int $entityId
      *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     * @return RedirectResponse|Response
      */
     public function show($entityId)
     {
         $entity = $this->interface->find($entityId);
         if (! $this->isAPI) {
             if (! $entity) {
-                return \Redirect::to($this->routeIndex)->with('warning', __('repository-generator.not_found'));
+                return Redirect::to($this->routeIndex)->with('warning', __('repository-generator.not_found'));
             }
-            \View::share('pageTitle', 'View '.$this->pageTitle.' | '.\Config::get('app.name'));
+            View::share('pageTitle', 'View '.$this->pageTitle.' | '.Config::get('app.name'));
             $this->breadcrumbs->put('view', [
                 'link' => '',
                 'text' => __('repository-generator.show'),
@@ -219,14 +225,14 @@ class Controller extends \App\Http\Controllers\Controller
      *
      * @param int $entityId
      *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     * @return RedirectResponse|Response
      */
     public function edit($entityId)
     {
         $entity = $this->interface->find($entityId);
         if (! $this->isAPI) {
             if (! $entity) {
-                return \Redirect::to($this->routeIndex)->with('warning', __('repository-generator.not_found'));
+                return Redirect::to($this->routeIndex)->with('warning', __('repository-generator.not_found'));
             }
             $this->breadcrumbs->put('edit', [
                 'link' => '',
@@ -245,13 +251,13 @@ class Controller extends \App\Http\Controllers\Controller
      *
      * @param int $entityId
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function update($entityId)
     {
         $entity = $this->interface->update($entityId, $this->request->except(['_token', '_method']));
 
-        return $this->makeResponse($entity,true);
+        return $this->makeResponse($entity, true);
     }
 
     /**
@@ -259,8 +265,9 @@ class Controller extends \App\Http\Controllers\Controller
      *
      * @param int $entityId
      *
-     * @return \Illuminate\Http\RedirectResponse
-     * @throws \Exception
+     * @throws Exception
+     *
+     * @return RedirectResponse
      */
     public function destroy($entityId)
     {
@@ -274,7 +281,7 @@ class Controller extends \App\Http\Controllers\Controller
      *
      * @param int $entityId
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function restore($entityId)
     {
@@ -288,7 +295,7 @@ class Controller extends \App\Http\Controllers\Controller
      *
      * @param int $entityId
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function forceDelete($entityId)
     {
@@ -301,32 +308,36 @@ class Controller extends \App\Http\Controllers\Controller
      * Make response for web or json.
      *
      * @param mixed $entity
-     * @param boolean $appendEntity
+     * @param bool  $appendEntity
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
-    function makeResponse($entity,$appendEntity = false)
+    public function makeResponse($entity, $appendEntity = false)
     {
         if (! $this->isAPI) {
             if ($entity) {
-                return \Redirect::to($this->routeIndex)->with('message', __('repository-generator.success'));
+                return Redirect::to($this->routeIndex)->with('message', __('repository-generator.success'));
             }
 
-            if ($entity === null) {
-                return \Redirect::to($this->routeIndex)->with('warning', __('repository-generator.not_found'));
+            if (null === $entity) {
+                return Redirect::to($this->routeIndex)->with('warning', __('repository-generator.not_found'));
             }
 
-            return \Redirect::to($this->routeIndex)->with('error', __('repository-generator.not_modified'));
+            return Redirect::to($this->routeIndex)->with('error', __('repository-generator.not_modified'));
         }
 
         if ($entity) {
-            if($appendEntity)
-                return response()->json(  ['status' => true, 'message' => __('repository-generator.success'), 'data' => $entity],
-                    JsonResponse::HTTP_OK);
+            if ($appendEntity) {
+                return response()->json(
+                    ['status' => true, 'message' => __('repository-generator.success'), 'data' => $entity],
+                    JsonResponse::HTTP_OK
+                );
+            }
+
             return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
         }
 
-        if ($entity === null) {
+        if (null === $entity) {
             return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
         }
 

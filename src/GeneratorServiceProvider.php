@@ -2,50 +2,47 @@
 
 namespace Shamaseen\Repository\Generator;
 
+use Config;
 use Illuminate\Support\ServiceProvider;
-
 use Shamaseen\Repository\Generator\Commands\Generator;
 
 /**
- * Class GeneratorServiceProvider
- * @package Shamaseen\Repository\Generator
+ * Class GeneratorServiceProvider.
  */
 class GeneratorServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap services.
-     *
-     * @return void
      */
     public function boot()
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                Generator::class
+                Generator::class,
             ]);
         }
 
         $this->publishes([
-            __DIR__.'/config' => realpath('config')
-        ],'repository-generator');
+            __DIR__.'/config' => realpath('config'),
+        ], 'repository-generator');
 
-        if ($this->app['config']->get('repository') === null) {
+        if (null === $this->app['config']->get('repository')) {
             $this->app['config']->set('repository', require __DIR__.'/config/repository.php');
         }
         $this->mergeConfigFrom(__DIR__.'/config/repository.php', 'repository-config');
+        $resourcesPath = realpath(__DIR__.'/../../../../resources/');
+        $stubPath = realpath(__DIR__.'/../stubs');
+        $langPath = Config::get('repository.lang_path').'/en';
         $this->publishes([
-            realpath(__DIR__ . '/../stubs') => \Config::get('repository.resources_path',realpath(__DIR__.'/../../../../resources/')),
-            __DIR__.'/lang' => \Config::get('repository.lang_path')."/en",
-        ],'repository-stub');
+            $stubPath => Config::get('repository.resources_path', $resourcesPath),
+            __DIR__.'/lang' => $langPath,
+        ], 'repository-stub');
     }
 
     /**
      * Register services.
-     *
-     * @return void
      */
     public function register()
     {
-
     }
 }

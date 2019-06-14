@@ -8,8 +8,12 @@
 
 namespace Shamaseen\Repository\Generator\Utility;
 
+use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use \Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
  * Interface EloquentInterface.
@@ -19,7 +23,7 @@ interface ContractInterface
     /**
      * @param array $columns
      *
-     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     * @return Collection|static[]
      */
     public function all($columns = ['*']);
 
@@ -34,14 +38,14 @@ interface ContractInterface
      * @param array $data
      * @param $entityId
      *
-     * @return Entity|\Illuminate\Database\Eloquent\Model|bool
+     * @return Entity|Model|bool
      */
     public function update($entityId, $data = []);
 
     /**
      * @param $entityId
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @return bool
      */
@@ -51,15 +55,17 @@ interface ContractInterface
      * @param $entityId
      * @param array $columns
      *
-     *  @return Entity|\Illuminate\Database\Eloquent\Model
+     *  @return Entity|Model
      */
     public function find($entityId, $columns = ['*']);
 
     /**
      * @param $entityId
      * @param array $columns
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @return Entity|\Illuminate\Database\Eloquent\Model
+     *
+     *@throws ModelNotFoundException
+     *
+     * @return Entity|Model
      */
     public function findOrFail($entityId = 0, $columns = ['*']);
 
@@ -67,12 +73,12 @@ interface ContractInterface
      * @param array $criteria
      * @param array $columns
      *
-     *  @return Entity|\Illuminate\Database\Eloquent\Model
+     *  @return Entity|Model
      */
     public function findBy($criteria = [], $columns = ['*']);
 
     /**
-     * @param int $limit
+     * @param int   $limit
      * @param array $criteria
      *
      * @return LengthAwarePaginator
@@ -80,7 +86,7 @@ interface ContractInterface
     public function paginate($limit = 10, $criteria = []);
 
     /**
-     * @param int $limit
+     * @param int   $limit
      * @param array $criteria
      *
      * @return Paginator
@@ -97,7 +103,7 @@ interface ContractInterface
     /**
      * @param string $name
      * @param string $entityId
-     * @param array $criteria
+     * @param array  $criteria
      *
      * @return array
      */
@@ -107,54 +113,52 @@ interface ContractInterface
      * @param array $filter
      * @param array $columns
      *
-     *  @return Entity|\Illuminate\Database\Eloquent\Model
+     *  @return Entity|Model
      */
     public function first($filter = [], $columns = ['*']);
 
     /**
      * @param array $data
-     * @return Entity|\Illuminate\Database\Eloquent\Model
+     *
+     * @return Entity|Model
      */
     public function create($data = []);
 
     /**
      * @param array $data
      *
-     * @return Entity|\Illuminate\Database\Eloquent\Model
+     * @return Entity|Model
      */
     public function createOrFirst($data = []);
 
     /**
      * @param array $data
      *
-     * @return Entity|\Illuminate\Database\Eloquent\Model
+     * @return Entity|Model
      */
     public function createOrUpdate($data = []);
 
     /**
-     * Get entity name
+     * Get entity name.
      *
      * @return string
      */
     public function entityName();
 
-    /**
-     * @return void
-     */
     public function trash();
-    /**
-     * @return void
-     */
+
     public function withTrash();
 
     /**
      * @param int $entityId
+     *
      * @return bool
      */
     public function restore($entityId = 0);
 
     /**
      * @param int $categoryId
+     *
      * @return bool
      */
     public function forceDelete($categoryId = 0);
