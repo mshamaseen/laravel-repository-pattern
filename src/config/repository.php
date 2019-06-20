@@ -8,7 +8,7 @@
 return [
     'app_path' => realpath(__DIR__.'/../app/'),
     'route_path' => realpath('routes/'),
-    'resources_path' => realpath(__DIR__.'/../vendor/shamaseen/repository-generator/stubs'),
+    'resources_path' => realpath('resources'),
     'stubs_path' => realpath('resources')."/stubs",
     'lang_path' => realpath('resources')."/lang",
     'config_path' => realpath('config'),

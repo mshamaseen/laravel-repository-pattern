@@ -64,7 +64,7 @@ Note: You can use Product instead of Products/Product, this will not make new fo
 Then generate views and languages files:
 
 ```bash
-php artisan make:repository product --only-view
+php artisan make:repository Products/Product --only-view
 ```
 
 ## License
