@@ -1,31 +1,31 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: shanmaseen
+ * User: Mohammad Shanmaseen
  * Date: 09/04/19
- * Time: 12:03 م
+ * Time: 12:03 م.
  */
+
 namespace Shamaseen\Repository\Generator\Forms;
 
 class Input extends Forms
 {
-
-    function template()
+    public function template()
     {
-        $required=$this->column->getNotnull()?'required':'';
+        $required = $this->column->getNotnull() ? 'required' : '';
 
         $template = str_replace(
             [
                 '{{columnName}}',
-                "{{type}}",
-                "{{required}}",
-                "{{label}}",
+                '{{type}}',
+                '{{required}}',
+                '{{label}}',
             ],
             [
                 $this->column->getName(),
                 $this->getType(),
                 $required,
-                ucfirst(str_replace('_',' ',$this->column->getName()))
+                ucfirst(str_replace('_', ' ', $this->column->getName())),
             ],
             $this->getFormStub('input')
         );

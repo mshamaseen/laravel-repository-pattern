@@ -8,10 +8,15 @@
 
 namespace Shamaseen\Repository\Generator\Utility;
 
+use Exception;
 use Illuminate\Container\Container as App;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
  * Class Database.
@@ -33,16 +38,17 @@ abstract class AbstractRepository implements ContractInterface
      */
     protected $model;
     /**
-     * @var boolean
+     * @var bool
      */
     private $trash = false;
     /**
-     * @var boolean
+     * @var bool
      */
     private $withTrash = false;
 
     /**
      * @param App $app
+     * @throws BindingResolutionException
      */
     public function __construct(App $app)
     {
@@ -50,6 +56,9 @@ abstract class AbstractRepository implements ContractInterface
         $this->makeModel();
     }
 
+    /**
+     * @throws BindingResolutionException
+     */
     protected function makeModel()
     {
         $this->model = $this->app->make($this->getModelClass());
@@ -61,7 +70,7 @@ abstract class AbstractRepository implements ContractInterface
     abstract protected function getModelClass(): string;
 
     /**
-     * @param int $limit
+     * @param int   $limit
      * @param array $criteria
      *
      * @return Paginator
@@ -73,11 +82,12 @@ abstract class AbstractRepository implements ContractInterface
 
     /**
      * @param array $criteria
+     *
      * @return Builder
      */
     public function filter($criteria = [])
     {
-        $criteria= $this->order($criteria);
+        $criteria = $this->order($criteria);
 
         /** @var Entity $latest */
         $latest = $this->model->with($this->with);
@@ -87,22 +97,19 @@ abstract class AbstractRepository implements ContractInterface
 
         if (isset($criteria['search'])) {
             foreach ($this->model->searchable as $method => $columns) {
-                if(method_exists($this->model,$method))
-                {
-                    $latest->orWhereHas($method,function ($query) use ($criteria,$columns)
-                    {
-                        /** @var $query Builder */
-                        $query->where(function ($query2) use($criteria,$columns){
-                            /** @var $query2 Builder */
-                            foreach ((array) $columns as $column)
-                            {
-                                $query2->orWhere($column, 'like', "%" . $criteria['search'] . "%");
+                if (method_exists($this->model, $method)) {
+                    $latest->orWhereHas($method, function ($query) use ($criteria, $columns) {
+                        /* @var $query Builder */
+                        $query->where(function ($query2) use ($criteria, $columns) {
+                            /* @var $query2 Builder */
+                            foreach ((array) $columns as $column) {
+                                $query2->orWhere($column, 'like', '%'.$criteria['search'].'%');
                             }
                         });
                     });
+                } else {
+                    $latest->orWhere($columns, 'like', '%'.$criteria['search'].'%');
                 }
-                else
-                    $latest->orWhere($columns, 'like', "%" . $criteria['search'] . "%");
             }
         }
         unset($criteria['search']);
@@ -118,14 +125,14 @@ abstract class AbstractRepository implements ContractInterface
     }
 
     /**
-     * prepare order for query
+     * prepare order for query.
      *
      * @param array $criteria
      *
      * @return array
      */
-    private function order($criteria=[]){
-
+    private function order($criteria = [])
+    {
         if (isset($criteria['order'])) {
             $this->order = $criteria['order'];
             unset($criteria['order']);
@@ -141,7 +148,7 @@ abstract class AbstractRepository implements ContractInterface
     }
 
     /**
-     * @param int $limit
+     * @param int   $limit
      * @param array $criteria
      *
      * @return LengthAwarePaginator
@@ -154,7 +161,7 @@ abstract class AbstractRepository implements ContractInterface
     /**
      * @param array $criteria
      *
-     * @return Builder[]|\Illuminate\Database\Eloquent\Collection
+     * @return Builder[]|Collection
      */
     public function get($criteria = [])
     {
@@ -165,14 +172,13 @@ abstract class AbstractRepository implements ContractInterface
      * @param $entityId
      * @param array $attributes
      *
-     * @return bool|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|Entity
+     * @return bool|Collection|Model|Entity
      */
     public function update($entityId = 0, $attributes = [])
     {
         $item = $this->model->findOrFail($entityId);
 
-        if($item->update($attributes))
-        {
+        if ($item->update($attributes)) {
             return $item;
         }
 
@@ -182,7 +188,7 @@ abstract class AbstractRepository implements ContractInterface
     /**
      * @param $entityId
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @return bool
      */
@@ -203,11 +209,10 @@ abstract class AbstractRepository implements ContractInterface
         return $this->model->insert($attributes);
     }
 
-
     /**
      * @param array $columns
      *
-     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     * @return Collection|static[]
      */
     public function all($columns = ['*'])
     {
@@ -217,7 +222,7 @@ abstract class AbstractRepository implements ContractInterface
     /**
      * @param string $name
      * @param string $entityId
-     * @param array $criteria
+     * @param array  $criteria
      *
      * @return array
      */
@@ -230,28 +235,31 @@ abstract class AbstractRepository implements ContractInterface
      * @param $entityId
      * @param array $columns
      *
-     * @return Entity|\Illuminate\Database\Eloquent\Model
+     * @return Entity|Model
      */
     public function find($entityId = 0, $columns = ['*'])
     {
-        return $this->model->with($this->with)->find($entityId,$columns);
+        return $this->model->with($this->with)->find($entityId, $columns);
     }
 
     /**
      * @param $entityId
      * @param array $columns
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @return Entity|\Illuminate\Database\Eloquent\Model
+     *
+     *@throws ModelNotFoundException
+     *
+     * @return Entity|Model
      */
     public function findOrFail($entityId = 0, $columns = ['*'])
     {
-        return $this->model->with($this->with)->findOrFail($entityId,$columns);
+        return $this->model->with($this->with)->findOrFail($entityId, $columns);
     }
+
     /**
      * @param array $filter
      * @param array $columns
      *
-     * @return Entity|\Illuminate\Database\Eloquent\Model
+     * @return Entity|Model
      */
     public function first($filter = [], $columns = ['*'])
     {
@@ -262,19 +270,18 @@ abstract class AbstractRepository implements ContractInterface
      * @param $haystack
      * @param $needle
      *
-     * @return Entity[]|\Illuminate\Database\Eloquent\Model[]|\Illuminate\Database\Eloquent\Collection
+     * @return Entity[]|Model[]|Collection
      */
     public function search($haystack, $needle)
     {
         return $this->model->where($haystack, 'like', $needle)->get();
     }
 
-
     /**
      * @param $criteria
      * @param array $columns
      *
-     * @return Entity|\Illuminate\Database\Eloquent\Model
+     * @return Entity|Model
      */
     public function findBy($criteria = [], $columns = ['*'])
     {
@@ -284,7 +291,7 @@ abstract class AbstractRepository implements ContractInterface
     /**
      * @param array $attributes
      *
-     * @return Entity|\Illuminate\Database\Eloquent\Model
+     * @return Entity|Model
      */
     public function create($attributes = [])
     {
@@ -294,7 +301,7 @@ abstract class AbstractRepository implements ContractInterface
     /**
      * @param array $attributes
      *
-     * @return Entity|\Illuminate\Database\Eloquent\Model
+     * @return Entity|Model
      */
     public function createOrUpdate($attributes = [])
     {
@@ -304,7 +311,7 @@ abstract class AbstractRepository implements ContractInterface
     /**
      * @param array $data
      *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return Model
      */
     public function createOrFirst($data = [])
     {
@@ -312,7 +319,7 @@ abstract class AbstractRepository implements ContractInterface
     }
 
     /**
-     * Get entity name
+     * Get entity name.
      *
      * @return string
      */
@@ -357,18 +364,12 @@ abstract class AbstractRepository implements ContractInterface
         return false;
     }
 
-    /**
-     * @return void
-     */
     public function trash()
     {
         $this->trash = true;
         $this->withTrash = false;
     }
 
-    /**
-     * @return void
-     */
     public function withTrash()
     {
         $this->trash = false;

@@ -24,7 +24,7 @@ use Illuminate\Database\Query\Builder;
  * @method static bool|null restore()
  * @method static Builder|Entity withTrashed()
  * @method static Builder|Entity withoutTrashed()
- * @mixin \Eloquent
+ * @mixin Eloquent
  */
 class Entity extends Eloquent
 {

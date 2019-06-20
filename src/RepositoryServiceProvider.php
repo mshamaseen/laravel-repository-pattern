@@ -4,6 +4,11 @@ namespace Shamaseen\Repository\Generator;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use RecursiveRegexIterator;
+use RegexIterator;
 
 /**
  * Class RepositoryServiceProvider.
@@ -27,36 +32,35 @@ class RepositoryServiceProvider extends ServiceProvider
 
     /**
      * RepositoryServiceProvider constructor.
+     *
      * @param $app
      */
     public function __construct($app)
     {
-
         parent::__construct($app);
 
-        if ($this->app['config']->get('repository') === null) {
+        if (null === $this->app['config']->get('repository')) {
             $this->app['config']->set('repository', require __DIR__.'/config/repository.php');
         }
-        $interfaces= str_plural(Config::get('repository.interface'));
-        $repositories= str_plural(Config::get('repository.repository'));
-        $interface= Config::get('repository.interface');
-        $repository= Config::get('repository.repository');
+        $interfaces = Str::plural(Config::get('repository.interface'));
+        $repositories = Str::plural(Config::get('repository.repository'));
+        $interface = Config::get('repository.interface');
+        $repository = Config::get('repository.repository');
 
         $contractsFolder = Config::get('repository.app_path').'/'.$interfaces;
 
         if (is_dir($contractsFolder)) {
-            $directory = new \RecursiveDirectoryIterator($contractsFolder);
-            $iterator = new \RecursiveIteratorIterator($directory);
-            $regex = new \RegexIterator($iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
+            $directory = new RecursiveDirectoryIterator($contractsFolder);
+            $iterator = new RecursiveIteratorIterator($directory);
+            $regex = new RegexIterator($iterator, '/^.+\.php$/i', RecursiveRegexIterator::GET_MATCH);
             foreach ($regex as $name => $value) {
-                
-                $contract = strstr($name,'app/') ?: strstr($name,'app\\');
-                $contract = rtrim($contract,'.php');
-                
+                $contract = strstr($name, 'app/') ?: strstr($name, 'app\\');
+                $contract = rtrim($contract, '.php');
+
                 $contractName = str_replace('/', '\\', ucfirst($contract));
 
                 $repositoryClass = str_replace($interfaces, $repositories, $contractName);
-                $repositoryClass = str_replace([$interface,'Interface'], $repository, $repositoryClass);
+                $repositoryClass = str_replace([$interface, 'Interface'], $repository, $repositoryClass);
 
                 $this->providers[] = $contractName;
                 $this->bindings[$contractName] = $repositoryClass;
