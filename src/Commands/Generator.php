@@ -74,7 +74,7 @@ class Generator extends Command
 
         if ($this->option('only-view')) {
             $this->makeViewsAndLanguage($path);
-
+            $this->dumpAutoload();
             return true;
         }
 
@@ -100,6 +100,8 @@ class Generator extends Command
         $webContent = "\nRoute::resource('{$pluralName}', '{$controllerPath}');";
 
         File::append($webFile, $webContent);
+
+        $this->dumpAutoload();
         return true;
     }
 
@@ -273,5 +275,10 @@ class Generator extends Command
                 $content = $filePath.$repoName.'.php';
         }
         file_put_contents($content, $template);
+    }
+
+    function dumpAutoload()
+    {
+        shell_exec('composer dump-autoload');
     }
 }
