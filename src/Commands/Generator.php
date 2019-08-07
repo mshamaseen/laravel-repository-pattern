@@ -74,7 +74,7 @@ class Generator extends Command
 
         if ($this->option('only-view')) {
             $this->makeViewsAndLanguage($path);
-            $this->dumpAutoload();
+
             return true;
         }
 
@@ -83,7 +83,6 @@ class Generator extends Command
 
     public function makeRepositoryPatternFiles($path)
     {
-
         $model = Str::plural(Config::get('repository.model'));
         $interface = Str::plural(Config::get('repository.interface'));
         $repository = Str::plural(Config::get('repository.repository'));
@@ -101,8 +100,6 @@ class Generator extends Command
         $webContent = "\nRoute::resource('{$pluralName}', '{$controllerPath}');";
 
         File::append($webFile, $webContent);
-
-        $this->dumpAutoload();
         return true;
     }
 
@@ -184,6 +181,7 @@ class Generator extends Command
     protected function generate($path, $folder, $type, $form = '')
     {
         $path = $path ? '\\'.$path : '';
+
         $content = $this->getStub($type);
 
         if (false === $content) {
@@ -216,6 +214,7 @@ class Generator extends Command
 
         $folder = str_replace('\\', '/', $folder);
         $path = str_replace('\\', '/', $path);
+
         $this->type($type, $folder, $path, $template);
 
         return true;
@@ -230,7 +229,7 @@ class Generator extends Command
      */
     public function getFolderOrCreate($path)
     {
-        if (! file_exists($path) && ! is_dir($path)) {
+        if (! file_exists($path)) {
             mkdir($path, 0777, true);
         }
 
@@ -275,11 +274,13 @@ class Generator extends Command
                 $repoName = lcfirst($this->repoName);
                 $content = $filePath.$repoName.'.php';
         }
-        file_put_contents($content, $template);
-    }
 
-    function dumpAutoload()
-    {
-        shell_exec('composer dump-autoload');
+        if(is_dir($filePath) && file_exists($content)){
+            $this->info($content . ' File Already Exists');
+
+            return false;
+        }
+
+        file_put_contents($content, $template);
     }
 }
