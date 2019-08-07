@@ -99,6 +99,9 @@ class Generator extends Command
 
         $webContent = "\nRoute::resource('{$pluralName}', '{$controllerPath}');";
 
+        $webFileContent = str_replace($webContent, '', file_get_contents($webFile));
+
+        File::put($webFile, $webFileContent);
         File::append($webFile, $webContent);
         return true;
     }
