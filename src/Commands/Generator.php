@@ -103,6 +103,9 @@ class Generator extends Command
 
         File::put($webFile, $webFileContent);
         File::append($webFile, $webContent);
+
+        $this->dumpAutoload();
+
         return true;
     }
 
@@ -277,8 +280,15 @@ class Generator extends Command
         }
 
         if(is_dir($filePath) && file_exists($content)){
-            $this->info($content . ' File Already Exists');
 
+            // Ask to replace exiting file
+            if ($this->confirm("This file, {$content} already exit, do you want to replace?")) {
+                file_put_contents($content, $template);
+                $this->line('File Replaced');
+
+                return false;
+            }
+            $this->line('File Not Replaced');
             return false;
         }
 
