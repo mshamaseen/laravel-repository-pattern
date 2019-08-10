@@ -280,16 +280,11 @@ class Generator extends Command
         }
 
         if(is_dir($filePath) && file_exists($content)){
-
             // Ask to replace exiting file
-            if ($this->confirm("This file, {$content} already exit, do you want to replace?")) {
-                file_put_contents($content, $template);
-                $this->line('File Replaced');
-
+            if (! $this->confirm("This file, {$content} already exit, do you want to replace?")) {
+                $this->line('File Not Replaced');
                 return false;
             }
-            $this->line('File Not Replaced');
-            return false;
         }
 
         file_put_contents($content, $template);
