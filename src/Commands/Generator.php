@@ -132,7 +132,7 @@ class Generator extends Command
         $languagePath = Config::get('repository.lang_path');
 
         foreach (Config::get('repository.languages') as $lang) {
-            $this->generate($repositoryName, "{$languagePath}/{$lang}", 'lang');
+            $this->generate($repositoryName, "{$languagePath}{$lang}", 'lang');
         }
 
         $this->generate($repositoryName, $viewsPath, 'create', $createHtml);
@@ -169,7 +169,7 @@ class Generator extends Command
      */
     protected function getStub($type)
     {
-        return file_get_contents(Config::get('repository.stubs_path')."/$type.stub");
+        return file_get_contents(Config::get('repository.stubs_path')."$type.stub");
     }
 
     /**

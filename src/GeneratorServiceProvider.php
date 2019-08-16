@@ -5,6 +5,7 @@ namespace Shamaseen\Repository\Generator;
 use Config;
 use Illuminate\Support\ServiceProvider;
 use Shamaseen\Repository\Generator\Commands\Generator;
+use Shamaseen\Repository\Generator\Commands\Remover;
 
 /**
  * Class GeneratorServiceProvider.
@@ -19,6 +20,7 @@ class GeneratorServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 Generator::class,
+                Remover::class
             ]);
         }
 

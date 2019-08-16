@@ -20,7 +20,7 @@ This package require the following dependencies:
 
 1- Require this package with composer using the following command:
 ```bash
-composer require --dev shamaseen/repository-generator
+composer require shamaseen/repository-generator
 ```
 2- publish the package config file by running:
 ```bash
