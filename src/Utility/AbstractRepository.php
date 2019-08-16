@@ -10,7 +10,6 @@ namespace Shamaseen\Repository\Generator\Utility;
 
 use Exception;
 use Illuminate\Container\Container as App;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -24,6 +23,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 abstract class AbstractRepository implements ContractInterface
 {
     protected $with = [];
+
     /**
      * @var App
      */
@@ -33,22 +33,34 @@ abstract class AbstractRepository implements ContractInterface
     protected $order = null;
 
     protected $direction = 'desc';
+
     /**
      * @var Entity
      */
     protected $model;
+
     /**
      * @var bool
      */
     private $trash = false;
+
     /**
      * @var bool
      */
     private $withTrash = false;
 
     /**
+     * @var bool
+     */
+    private $allowCaching = true;
+
+    /**
+     * @var array
+     */
+    private $cache = [];
+
+    /**
      * @param App $app
-     * @throws BindingResolutionException
      */
     public function __construct(App $app)
     {
@@ -56,9 +68,6 @@ abstract class AbstractRepository implements ContractInterface
         $this->makeModel();
     }
 
-    /**
-     * @throws BindingResolutionException
-     */
     protected function makeModel()
     {
         $this->model = $this->app->make($this->getModelClass());
@@ -78,6 +87,14 @@ abstract class AbstractRepository implements ContractInterface
     public function simplePaginate($limit = 10, $criteria = [])
     {
         return $this->filter($criteria)->simplePaginate($limit);
+    }
+
+    /**
+     * @return \Illuminate\Database\Query\Builder|Entity
+     */
+    public function builder()
+    {
+        return $this->model->query();
     }
 
     /**
@@ -239,7 +256,18 @@ abstract class AbstractRepository implements ContractInterface
      */
     public function find($entityId = 0, $columns = ['*'])
     {
-        return $this->model->with($this->with)->find($entityId, $columns);
+        if($this->allowCaching)
+        {
+            if (isset($this->cache[$entityId]))
+                return $this->cache[$entityId];
+        }
+
+        $entity = $this->model->with($this->with)->find($entityId, $columns);
+
+        if($this->allowCaching)
+            $this->cache[$entityId] = $entity;
+
+        return $entity;
     }
 
     /**
@@ -252,7 +280,18 @@ abstract class AbstractRepository implements ContractInterface
      */
     public function findOrFail($entityId = 0, $columns = ['*'])
     {
-        return $this->model->with($this->with)->findOrFail($entityId, $columns);
+        if($this->allowCaching)
+        {
+            if (isset($this->cache[$entityId]))
+                return $this->cache[$entityId];
+        }
+
+        $entity = $this->model->with($this->with)->findOrFail($entityId, $columns);
+
+        if($this->allowCaching)
+            $this->cache[$entityId] = $entity;
+
+        return $entity;
     }
 
     /**
@@ -263,7 +302,41 @@ abstract class AbstractRepository implements ContractInterface
      */
     public function first($filter = [], $columns = ['*'])
     {
-        return $this->model->with($this->with)->select($columns)->where($filter)->first();
+        if($this->allowCaching)
+        {
+            if (isset($this->cache['first']))
+                return $this->cache['first'];
+        }
+
+        $entity = $this->model->with($this->with)->select($columns)->where($filter)->first();
+
+        if($this->allowCaching)
+            $this->cache['first'] = $entity;
+
+        return $entity;
+    }
+
+    /**
+     * @param array $filter
+     * @param array $columns
+     *
+     * @return Entity|Model
+     */
+    public function last($filter = [], $columns = ['*'])
+    {
+        if($this->allowCaching)
+        {
+            if (isset($this->cache['last']))
+                return $this->cache['last'];
+        }
+
+        $entity = $this->model->with($this->with)->select($columns)->where($filter)
+            ->orderBy('id','desc')->first();
+
+        if($this->allowCaching)
+            $this->cache['last'] = $entity;
+
+        return $entity;
     }
 
     /**
@@ -374,5 +447,17 @@ abstract class AbstractRepository implements ContractInterface
     {
         $this->trash = false;
         $this->withTrash = true;
+    }
+
+    public function disableCaching()
+    {
+        $this->allowCaching = false;
+        return $this;
+    }
+
+    public function allowCaching()
+    {
+        $this->allowCaching = true;
+        return $this;
     }
 }
