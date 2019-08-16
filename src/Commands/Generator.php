@@ -61,7 +61,7 @@ class Generator extends Command
      */
     public function handle()
     {
-        $file = preg_split(' (/|\\\\) ', (string) $this->argument('name')) ?? [];
+        $file = preg_split(' (/|\\\\) ', (string)$this->argument('name')) ?? [];
 
         if (! $file) {
             return 'Something wrong with the inputs !';
@@ -93,15 +93,19 @@ class Generator extends Command
         $this->generate($path, $interface, 'Interface');
         $this->generate($path, $repository, 'Repository');
 
-        $webFile = Config::get('repository.route_path').'/web.php';
+        $webFile = Config::get('repository.route_path') . '/web.php';
         $pluralName = strtolower(Str::plural($this->repoName));
-        $controllerPath = $path.'\\'.$this->repoName.'Controller';
+        $controllerPath = $path . '\\' . $this->repoName . 'Controller';
 
         $webContent = "\nRoute::resource('{$pluralName}', '{$controllerPath}');";
 
+        $webFileContent = str_replace($webContent, '', file_get_contents($webFile));
+
+        File::put($webFile, $webFileContent);
         File::append($webFile, $webContent);
 
         $this->dumpAutoload();
+
         return true;
     }
 
@@ -122,13 +126,13 @@ class Generator extends Command
         } else {
             $message = "There is no entity for {$this->repoName}, 
                         do you want to continue (this will disable form generator) ?";
-            if (! $this->confirm($message)) {
+            if (!$this->confirm($message)) {
                 echo 'Dispatch ..';
                 die;
             }
         }
         $repositoryName = lcfirst($this->repoName);
-        $viewsPath = Config::get('repository.resources_path').'/views';
+        $viewsPath = Config::get('repository.resources_path') . '/views';
         $languagePath = Config::get('repository.lang_path');
 
         foreach (Config::get('repository.languages') as $lang) {
@@ -144,14 +148,14 @@ class Generator extends Command
     /**
      * @param $path
      *
+     * @return bool|Model|object
      * @throws ReflectionException
      *
-     * @return bool|Model|object
      */
     public function getEntity($path)
     {
-        $myClass = 'App\Entities\\'.$path.'\\'.$this->repoName;
-        if (! class_exists($myClass)) {
+        $myClass = 'App\Entities\\' . $path . '\\' . $this->repoName;
+        if (!class_exists($myClass)) {
             return false;
         }
 
@@ -169,24 +173,24 @@ class Generator extends Command
      */
     protected function getStub($type)
     {
-        return file_get_contents(Config::get('repository.stubs_path')."$type.stub");
+        return file_get_contents(Config::get('repository.stubs_path') . "/$type.stub");
     }
 
     /**
-     * @param string $path   Class path
+     * @param string $path Class path
      * @param string $folder default path to generate in
-     * @param string $type   define which kind of files should generate
+     * @param string $type define which kind of files should generate
      * @param string $form
      *
      * @return bool
      */
     protected function generate($path, $folder, $type, $form = '')
     {
-        $path = $path ? '\\'.$path : '';
+        $path = $path ? '\\' . $path : '';
         $content = $this->getStub($type);
 
         if (false === $content) {
-            echo 'file '.$type.'.stub is not exist !';
+            echo 'file ' . $type . '.stub is not exist !';
 
             return false;
         }
@@ -229,7 +233,7 @@ class Generator extends Command
      */
     public function getFolderOrCreate($path)
     {
-        if (! file_exists($path)) {
+        if (!file_exists($path)) {
             mkdir($path, 0777, true);
         }
 
@@ -237,9 +241,9 @@ class Generator extends Command
     }
 
     /**
-     * @param string $path     Class path
-     * @param string $folder   default path to generate in
-     * @param string $type     define which kind of files should generate
+     * @param string $path Class path
+     * @param string $folder default path to generate in
+     * @param string $type define which kind of files should generate
      * @param string $template temple file
      *
      * return void
@@ -248,7 +252,7 @@ class Generator extends Command
     {
         switch ($type) {
             case 'Entity':
-                $filePath = $this->getFolderOrCreate(Config::get('repository.app_path')."/{$folder}/{$path}");
+                $filePath = $this->getFolderOrCreate(Config::get('repository.app_path') . "/{$folder}/{$path}");
                 $filePath = rtrim($filePath, '/');
                 $content = "{$filePath}/{$this->repoName}.php";
 
@@ -257,7 +261,7 @@ class Generator extends Command
             case 'Request':
             case 'Repository':
             case 'Interface':
-                $filePath = $this->getFolderOrCreate(Config::get('repository.app_path')."/{$folder}/{$path}");
+                $filePath = $this->getFolderOrCreate(Config::get('repository.app_path') . "/{$folder}/{$path}");
                 $filePath = rtrim($filePath, '/');
                 $content = "{$filePath}/{$this->repoName}{$type}.php";
                 break;
@@ -265,15 +269,24 @@ class Generator extends Command
             case 'edit':
             case 'index':
             case 'show':
-                $filePath = $this->getFolderOrCreate($folder.'/'.Str::plural($path)).'/';
+                $filePath = $this->getFolderOrCreate($folder . '/' . Str::plural($path)) . '/';
                 $repoName = lcfirst($type);
-                $content = $filePath.$repoName.'.blade.php';
+                $content = $filePath . $repoName . '.blade.php';
                 break;
             default:
-                $filePath = $this->getFolderOrCreate($folder).'/';
+                $filePath = $this->getFolderOrCreate($folder) . '/';
                 $repoName = lcfirst($this->repoName);
-                $content = $filePath.$repoName.'.php';
+                $content = $filePath . $repoName . '.php';
         }
+
+        if(is_dir($filePath) && file_exists($content)){
+            // Ask to replace exiting file
+            if (! $this->confirm("This file, {$content} already exit, do you want to replace?")) {
+                $this->line('File Not Replaced');
+                return false;
+            }
+        }
+
         file_put_contents($content, $template);
     }
 
@@ -282,3 +295,4 @@ class Generator extends Command
         shell_exec('composer dump-autoload');
     }
 }
+

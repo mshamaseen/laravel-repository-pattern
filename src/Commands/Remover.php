@@ -62,6 +62,10 @@ class Remover extends Command
         unset($file[count($file) - 1]);
         $path = implode('\\', $file);
 
+        if (!$this->confirm('This will delete '.$this->repoName.' files and folder, Do you want to continue ?')) {
+            return false;
+        }
+
         $model = Str::plural(Config::get('repository.model'));
         $interface = Str::plural(Config::get('repository.interface'));
         $repository = Str::plural(Config::get('repository.repository'));
@@ -84,23 +88,28 @@ class Remover extends Command
 
         switch ($type) {
             case 'Entity':
-                $filePath = Config::get('repository.app_path')."/{$folder}/{$relativePath}/{$this->repoName}.php";
-
+                $filePath = Config::get('repository.app_path')."/{$folder}/{$relativePath}/";
+                $fileName = "{$this->repoName}.php";
                 break;
             case 'Controller':
             case 'Request':
             case 'Repository':
             case 'Interface':
             default:
-                $filePath = Config::get('repository.app_path') . "/{$folder}/{$relativePath}/{$this->repoName}{$type}.php";
+                $filePath = Config::get('repository.app_path') . "/{$folder}/{$relativePath}/";
+                $fileName = "{$this->repoName}{$type}.php";
         }
-        if(!is_file($filePath))
+        if(!is_file($filePath.$fileName))
         {
             $this->warn($filePath.' is not a valid file');
             return false;
         }
 
-        unlink($filePath);
+        unlink($filePath.$fileName);
+        if(!(new \FilesystemIterator($filePath))->valid())
+        {
+            rmdir($filePath);
+        }
         return true;
     }
 }

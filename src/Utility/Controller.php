@@ -132,6 +132,7 @@ class Controller extends \App\Http\Controllers\Controller
     public function index()
     {
         $data = $this->interface->simplePaginate($this->limit, $this->request->all());
+
         if (! $this->isAPI) {
             View::share('pageTitle', 'List '.$this->pageTitle.' | '.Config::get('app.name'));
             $this->breadcrumbs->put('index', [
