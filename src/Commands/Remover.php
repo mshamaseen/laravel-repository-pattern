@@ -77,12 +77,11 @@ class Remover extends Command
         $this->remove('Request',$requestFolder,$path);
         $this->remove('Repository',$repository,$path);
         $this->remove('Interface',$interface,$path);
-
+        return true;
     }
 
     function remove($type,$folder,$relativePath)
     {
-
         $folder = str_replace('\\', '/', $folder);
         $relativePath = str_replace('\\', '/', $relativePath);
 

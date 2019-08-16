@@ -4,6 +4,7 @@ namespace App\{{folder}}{{path}};
 
 
 use Shamaseen\Repository\Generator\Utility\ContractInterface;
+
 /**
  * Interface {{modelName}}Interface
  * @package App\{{folder}}{{path}}

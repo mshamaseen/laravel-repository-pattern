@@ -6,6 +6,7 @@ use App\{{modelBaseFolderName}}{{path}}\{{modelName}};
 use App\{{interfaceBaseFolderName}}{{path}}\{{modelName}}Interface;
 use Shamaseen\Repository\Generator\Utility\AbstractRepository;
 use Illuminate\Container\Container as App;
+
 /**
  * Class {{modelName}}Repository
  * @package App\Repositories{{path}}
@@ -14,13 +15,16 @@ use Illuminate\Container\Container as App;
 class {{modelName}}Repository extends AbstractRepository implements {{modelName}}Interface
 {
     protected $with = [];
+
     /**
      * @param App $app
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function __construct(App $app)
     {
         parent::__construct($app);
     }
+
     /**
      * @return string
      */
