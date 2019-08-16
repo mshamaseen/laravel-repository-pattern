@@ -80,7 +80,7 @@ class Remover extends Command
         return true;
     }
 
-    function remove($type,$folder,$relativePath)
+    public function remove($type,$folder,$relativePath)
     {
         $folder = str_replace('\\', '/', $folder);
         $relativePath = str_replace('\\', '/', $relativePath);
