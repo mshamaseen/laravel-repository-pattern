@@ -21,7 +21,7 @@ use View;
 /**
  * Class BaseController.
  */
-class Controller extends \App\Http\Controllers\Controller
+class Controller extends App\Http\Controllers\Controller
 {
     /**
      * @var ContractInterface

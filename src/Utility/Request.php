@@ -29,7 +29,7 @@ class Request extends FormRequest
     {
         if (false !== strpos($this->path(), 'api')) {
             $errors = (new ValidationException($validator))->errors();
-            throw new HttpResponseException(response()->json(['success' => false, 'errors' => $errors,
+            throw new HttpResponseException(\Response::json(['success' => false, 'errors' => $errors,
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
         }
         parent::failedValidation($validator);

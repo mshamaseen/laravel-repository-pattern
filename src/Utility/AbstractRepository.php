@@ -178,11 +178,12 @@ abstract class AbstractRepository implements ContractInterface
     /**
      * @param array $criteria
      *
+     * @param array $columns
      * @return Builder[]|Collection
      */
-    public function get($criteria = [])
+    public function get($criteria = [],$columns = [])
     {
-        return $this->filter($criteria)->get();
+        return $this->filter($criteria)->get($columns);
     }
 
     /**
@@ -224,16 +225,6 @@ abstract class AbstractRepository implements ContractInterface
     public function insert($attributes = [])
     {
         return $this->model->insert($attributes);
-    }
-
-    /**
-     * @param array $columns
-     *
-     * @return Collection|static[]
-     */
-    public function all($columns = ['*'])
-    {
-        return $this->model->all($columns);
     }
 
     /**
@@ -408,7 +399,7 @@ abstract class AbstractRepository implements ContractInterface
      */
     public function restore($entityId = 0)
     {
-        /** @var Entity $entity */
+        /** @var Entity|null $entity */
         $entity = $this->model->withTrashed()
             ->whereId($entityId)
             ->first();
@@ -426,7 +417,7 @@ abstract class AbstractRepository implements ContractInterface
      */
     public function forceDelete($entityId = 0)
     {
-        /** @var Entity $entity */
+        /** @var Entity|null $entity */
         $entity = $this->model->withTrashed()
             ->whereId($entityId)
             ->first();
