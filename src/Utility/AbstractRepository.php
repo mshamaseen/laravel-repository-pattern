@@ -181,7 +181,7 @@ abstract class AbstractRepository implements ContractInterface
      * @param array $columns
      * @return Builder[]|Collection
      */
-    public function get($criteria = [],$columns = [])
+    public function get($criteria = [],$columns = ['*'])
     {
         return $this->filter($criteria)->get($columns);
     }
