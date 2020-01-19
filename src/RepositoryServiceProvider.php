@@ -62,7 +62,10 @@ class RepositoryServiceProvider extends ServiceProvider
 
                 $repositoryClass = str_replace($interfaces, $repositories, $contractName);
                 $repositoryClass = str_replace([$interface, 'Interface'], $repository, $repositoryClass);
-                if (class_exists($contractName) && in_array(ContractInterface::class, class_implements($contractName))) {
+                $this->providers[] = $contractName;
+                $this->bindings[$contractName] = $repositoryClass;
+
+                if (interface_exists($contractName) && in_array(ContractInterface::class, class_implements($contractName))) {
                     $this->providers[] = $contractName;
                     $this->bindings[$contractName] = $repositoryClass;
                 }
