@@ -78,8 +78,10 @@ tools:
 
     # Security Advisory Checker
     sensiolabs_security_checker: true
-
 build:
+    environment:
+        php:
+            version: '7.0'
     nodes:
         analysis:
             dependencies:
