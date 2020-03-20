@@ -7,10 +7,13 @@
  */
 
 return [
-    'create' => 'Create',
-    'show' => 'Show',
     'edit' => 'Edit',
-    'success' => 'Success',
-    'not_found' => 'Not found',
-    'not_modified' => 'Not modified',
+    'create' => 'Create',
+    'view' => 'View',
+    'show' => 'Show',
+    'success' => 'Process was successfully finished!',
+    'not_modified' => 'Process was completed with no changes!',
+    'error' => 'An error occur, please try again later!',
+    'not_found' => 'What you are looking for is not found!',
+    'no_content' => 'No content to show!',
 ];
