@@ -61,9 +61,9 @@ class Generator extends Command
      */
     public function handle()
     {
-        $file = preg_split(' (/|\\\\) ', (string)$this->argument('name')) ?? [];
+        $file = preg_split(' ([/\\\]) ', (string)$this->argument('name')) ?? [];
 
-        if (! $file) {
+        if (!$file) {
             return 'Something wrong with the inputs !';
         }
 
@@ -83,26 +83,42 @@ class Generator extends Command
 
     public function makeRepositoryPatternFiles($path)
     {
-        $model = Str::plural(Config::get('repository.model'));
-        $interface = Str::plural(Config::get('repository.interface'));
-        $repository = Str::plural(Config::get('repository.repository'));
+        $model = Str::plural(Config::get('repository.model', 'Entity'));
+        $interface = Str::plural(Config::get('repository.interface', 'Interface'));
+        $repository = Str::plural(Config::get('repository.repository', 'Repository'));
+        $controller = Config::get('repository.controllers_folder', 'Http\Controllers');
+        $request = Config::get('repository.requests_folder', 'Http\Requests');
+        $resource = Config::get('repository.resources_folder', 'Http\Resources');
 
-        $this->generate($path, Config::get('repository.controllers_folder'), 'Controller');
-        $this->generate($path, $model, 'Entity');
-        $this->generate($path, Config::get('repository.requests_folder'), 'Request');
-        $this->generate($path, $interface, 'Interface');
-        $this->generate($path, $repository, 'Repository');
+        $base="Shamaseen\Repository\Generator\Utility";
+        $modelBase = Config::get('repository.base_model', "{$base}\Entity");
+        $interfaceBase = Config::get('repository.base_interface', "{$base}\ContractInterface");
+        $repositoryBase = Config::get('repository.base_repository', "{$base}\AbstractRepository");
+        $controllerBase = Config::get('repository.base_controller', "{$base}\Controller");
+        $requestBase = Config::get('repository.base_request', "{$base}\Request");
+        $resourceBase = Config::get('repository.base_resource', "{$base}\JsonResource");
+
+        $this->generate($controllerBase, $path, $controller, 'Controller');
+        $this->generate($resourceBase, $path, $resource, 'Resource');
+        $this->generate($modelBase, $path, $model, 'Entity');
+        $this->generate($requestBase, $path, $request, 'Request');
+        $this->generate($interfaceBase, $path, $interface, 'Interface');
+        $this->generate($repositoryBase, $path, $repository, 'Repository');
 
         $webFile = Config::get('repository.route_path') . '/web.php';
+        $apiFile = Config::get('repository.route_path') . '/api.php';
         $pluralName = strtolower(Str::plural($this->repoName));
         $controllerPath = $path . '\\' . $this->repoName . 'Controller';
 
         $webContent = "\nRoute::resource('{$pluralName}', '{$controllerPath}');";
 
         $webFileContent = str_replace($webContent, '', file_get_contents($webFile));
+        $apiFileContent = str_replace($webContent, '', file_get_contents($apiFile));
 
         File::put($webFile, $webFileContent);
+        File::put($webFile, $apiFileContent);
         File::append($webFile, $webContent);
+        File::append($apiFile, $webContent);
 
         $this->dumpAutoload();
 
@@ -177,6 +193,7 @@ class Generator extends Command
     }
 
     /**
+     * @param $base
      * @param string $path Class path
      * @param string $folder default path to generate in
      * @param string $type define which kind of files should generate
@@ -184,7 +201,7 @@ class Generator extends Command
      *
      * @return bool
      */
-    protected function generate($path, $folder, $type, $form = '')
+    protected function generate($base, $path, $folder, $type, $form = '')
     {
         $path = $path ? '\\' . $path : '';
         $content = $this->getStub($type);
@@ -197,6 +214,7 @@ class Generator extends Command
 
         $template = str_replace(
             [
+                '{{base}}',
                 '{{modelName}}',
                 '{{lcPluralModelName}}',
                 '{{folder}}',
@@ -206,6 +224,7 @@ class Generator extends Command
                 '{{form}}',
             ],
             [
+                $base,
                 $this->repoName,
                 Str::plural(lcfirst($this->repoName)),
                 Str::plural($folder),
@@ -246,7 +265,7 @@ class Generator extends Command
      * @param string $type define which kind of files should generate
      * @param string $template temple file
      *
-     * return void
+     * @return bool
      */
     private function type($type, $folder, $path, $template)
     {
@@ -258,6 +277,7 @@ class Generator extends Command
 
                 break;
             case 'Controller':
+            case 'Resource':
             case 'Request':
             case 'Repository':
             case 'Interface':
@@ -279,9 +299,9 @@ class Generator extends Command
                 $content = $filePath . $repoName . '.php';
         }
 
-        if(is_dir($filePath) && file_exists($content)){
+        if (is_dir($filePath) && file_exists($content)) {
             // Ask to replace exiting file
-            if (! $this->confirm("This file, {$content} already exit, do you want to replace?")) {
+            if (!$this->confirm("This file, {$content} already exit, do you want to replace?")) {
                 $this->line('File Not Replaced');
                 return false;
             }

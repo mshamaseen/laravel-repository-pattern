@@ -4,7 +4,7 @@ namespace App\Repositories{{path}};
 
 use App\{{modelBaseFolderName}}{{path}}\{{modelName}};
 use App\{{interfaceBaseFolderName}}{{path}}\{{modelName}}Interface;
-use Shamaseen\Repository\Generator\Utility\AbstractRepository;
+use {{base}};
 use Illuminate\Container\Container as App;
 
 /**

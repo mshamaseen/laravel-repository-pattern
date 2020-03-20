@@ -18,8 +18,17 @@ return [
     'model' => 'Entity',
     'repository' => 'Repository',
 
+    //Base extend classes
+    'base_controller'=>'Shamaseen\Repository\Generator\Utility\Controller',
+    'base_resource'=>'Shamaseen\Repository\Generator\Utility\JsonResource',
+    'base_interface'=>'Shamaseen\Repository\Generator\Utility\ContractInterface',
+    'base_model'=>'Shamaseen\Repository\Generator\Utility\Entity',
+    'base_repository'=>'Shamaseen\Repository\Generator\Utility\AbstractRepository',
+    'base_request'=>'Shamaseen\Repository\Generator\Utility\Request',
+
     //namespaces
     'controllers_folder' => 'Http\Controllers',
+    'resources_folder' => 'Http\Resources',
     'requests_folder' => 'Http\Requests',
 
     'languages' => [

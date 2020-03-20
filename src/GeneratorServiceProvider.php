@@ -32,7 +32,7 @@ class GeneratorServiceProvider extends ServiceProvider
             $this->app['config']->set('repository', require __DIR__.'/config/repository.php');
         }
         $this->mergeConfigFrom(__DIR__.'/config/repository.php', 'repository-config');
-        $resourcesPathStub = realpath(__DIR__.'/../../../../resources') .'/stubs';
+        $resourcesPathStub = resource_path('/stubs');
         $stubPath = realpath(__DIR__.'/../stubs');
         $langPath = Config::get('repository.lang_path').'/en';
 

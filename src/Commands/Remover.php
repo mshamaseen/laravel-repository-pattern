@@ -51,9 +51,9 @@ class Remover extends Command
      */
     public function handle()
     {
-        $file = preg_split(' (/|\\\\) ', (string) $this->argument('name')) ?? [];
+        $file = preg_split(' (/|\\\\) ', (string)$this->argument('name')) ?? [];
 
-        if (! $file) {
+        if (!$file) {
             return 'Something wrong with the inputs !';
         }
 
@@ -62,51 +62,52 @@ class Remover extends Command
         unset($file[count($file) - 1]);
         $path = implode('\\', $file);
 
-        if (!$this->confirm('This will delete '.$this->repoName.' files and folder, Do you want to continue ?')) {
+        if (!$this->confirm('This will delete ' . $this->repoName . ' files and folder, Do you want to continue ?')) {
             return false;
         }
 
         $model = Str::plural(Config::get('repository.model'));
         $interface = Str::plural(Config::get('repository.interface'));
         $repository = Str::plural(Config::get('repository.repository'));
-        $controllerFolder =  Config::get('repository.controllers_folder');
+        $controllerFolder = Config::get('repository.controllers_folder');
         $requestFolder = Config::get('repository.requests_folder');
+        $resourceFolder = Config::get('repository.resources_folder');
 
-        $this->remove('Entity',$model,$path);
-        $this->remove('Controller',$controllerFolder,$path);
-        $this->remove('Request',$requestFolder,$path);
-        $this->remove('Repository',$repository,$path);
-        $this->remove('Interface',$interface,$path);
+        $this->remove('Entity', $model, $path);
+        $this->remove('Controller', $controllerFolder, $path);
+        $this->remove('Resource', $resourceFolder, $path);
+        $this->remove('Request', $requestFolder, $path);
+        $this->remove('Repository', $repository, $path);
+        $this->remove('Interface', $interface, $path);
         return true;
     }
 
-    public function remove($type,$folder,$relativePath)
+    public function remove($type, $folder, $relativePath)
     {
         $folder = str_replace('\\', '/', $folder);
         $relativePath = str_replace('\\', '/', $relativePath);
 
         switch ($type) {
             case 'Entity':
-                $filePath = Config::get('repository.app_path')."/{$folder}/{$relativePath}/";
+                $filePath = Config::get('repository.app_path') . "/{$folder}/{$relativePath}/";
                 $fileName = "{$this->repoName}.php";
                 break;
             case 'Controller':
             case 'Request':
+            case 'Resource':
             case 'Repository':
             case 'Interface':
             default:
                 $filePath = Config::get('repository.app_path') . "/{$folder}/{$relativePath}/";
                 $fileName = "{$this->repoName}{$type}.php";
         }
-        if(!is_file($filePath.$fileName))
-        {
-            $this->warn($filePath.' is not a valid file');
+        if (!is_file($filePath . $fileName)) {
+            $this->warn($filePath . ' is not a valid file');
             return false;
         }
 
-        unlink($filePath.$fileName);
-        if(!(new \FilesystemIterator($filePath))->valid())
-        {
+        unlink($filePath . $fileName);
+        if (!(new \FilesystemIterator($filePath))->valid()) {
             rmdir($filePath);
         }
         return true;
