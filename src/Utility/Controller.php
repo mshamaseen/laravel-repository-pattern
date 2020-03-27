@@ -374,7 +374,7 @@ class Controller extends App\Http\Controllers\Controller
                     [
                         'status' => true,
                         'message' => __('repository-generator.success'),
-                        'data' => new $this->resource($entity)
+                        'data' => new JsonResource($entity)
                     ],
                     JsonResponse::HTTP_OK
                 );
