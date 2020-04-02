@@ -127,12 +127,11 @@ class Controller extends App\Http\Controllers\Controller
             View::share('selectedMenu', $this->selectedMenu);
         }
         $this->resource = $resource;
-        if(is_null($resource)){
+        if (is_null($resource)) {
             $this->resource = new JsonResource([]);
         }
 
         $this->request = $request;
-
     }
 
     /**
