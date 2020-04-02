@@ -126,8 +126,13 @@ class Controller extends App\Http\Controllers\Controller
             View::share('search', $this->search);
             View::share('selectedMenu', $this->selectedMenu);
         }
-        $this->request = $request;
         $this->resource = $resource;
+        if(is_null($resource)){
+            $this->resource = new JsonResource([]);
+        }
+
+        $this->request = $request;
+
     }
 
     /**
