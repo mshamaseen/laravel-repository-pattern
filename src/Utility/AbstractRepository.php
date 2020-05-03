@@ -10,7 +10,6 @@ namespace Shamaseen\Repository\Generator\Utility;
 
 use Exception;
 use Illuminate\Container\Container as App;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -24,6 +23,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 abstract class AbstractRepository implements ContractInterface
 {
     protected $with = [];
+
     /**
      * @var App
      */
@@ -33,22 +33,34 @@ abstract class AbstractRepository implements ContractInterface
     protected $order = null;
 
     protected $direction = 'desc';
+
     /**
      * @var Entity
      */
     protected $model;
+
     /**
      * @var bool
      */
     private $trash = false;
+
     /**
      * @var bool
      */
     private $withTrash = false;
 
     /**
+     * @var bool
+     */
+    private $allowCaching = true;
+
+    /**
+     * @var array
+     */
+    private $cache = [];
+
+    /**
      * @param App $app
-     * @throws BindingResolutionException
      */
     public function __construct(App $app)
     {
@@ -56,9 +68,6 @@ abstract class AbstractRepository implements ContractInterface
         $this->makeModel();
     }
 
-    /**
-     * @throws BindingResolutionException
-     */
     protected function makeModel()
     {
         $this->model = $this->app->make($this->getModelClass());
@@ -70,7 +79,7 @@ abstract class AbstractRepository implements ContractInterface
     abstract protected function getModelClass(): string;
 
     /**
-     * @param int   $limit
+     * @param int $limit
      * @param array $criteria
      *
      * @return Paginator
@@ -78,6 +87,14 @@ abstract class AbstractRepository implements ContractInterface
     public function simplePaginate($limit = 10, $criteria = [])
     {
         return $this->filter($criteria)->simplePaginate($limit);
+    }
+
+    /**
+     * @return \Illuminate\Database\Query\Builder|Entity
+     */
+    public function builder()
+    {
+        return $this->model->query();
     }
 
     /**
@@ -102,13 +119,13 @@ abstract class AbstractRepository implements ContractInterface
                         /* @var $query Builder */
                         $query->where(function ($query2) use ($criteria, $columns) {
                             /* @var $query2 Builder */
-                            foreach ((array) $columns as $column) {
-                                $query2->orWhere($column, 'like', '%'.$criteria['search'].'%');
+                            foreach ((array)$columns as $column) {
+                                $query2->orWhere($column, 'like', '%' . $criteria['search'] . '%');
                             }
                         });
                     });
                 } else {
-                    $latest->orWhere($columns, 'like', '%'.$criteria['search'].'%');
+                    $latest->orWhere($columns, 'like', '%' . $criteria['search'] . '%');
                 }
             }
         }
@@ -148,7 +165,7 @@ abstract class AbstractRepository implements ContractInterface
     }
 
     /**
-     * @param int   $limit
+     * @param int $limit
      * @param array $criteria
      *
      * @return LengthAwarePaginator
@@ -161,11 +178,12 @@ abstract class AbstractRepository implements ContractInterface
     /**
      * @param array $criteria
      *
+     * @param array $columns
      * @return Builder[]|Collection
      */
-    public function get($criteria = [])
+    public function get($criteria = [], $columns = ['*'])
     {
-        return $this->filter($criteria)->get();
+        return $this->filter($criteria)->get($columns);
     }
 
     /**
@@ -188,9 +206,9 @@ abstract class AbstractRepository implements ContractInterface
     /**
      * @param $entityId
      *
+     * @return bool
      * @throws Exception
      *
-     * @return bool
      */
     public function delete($entityId = 0)
     {
@@ -210,25 +228,15 @@ abstract class AbstractRepository implements ContractInterface
     }
 
     /**
-     * @param array $columns
-     *
-     * @return Collection|static[]
-     */
-    public function all($columns = ['*'])
-    {
-        return $this->model->all($columns);
-    }
-
-    /**
      * @param string $name
      * @param string $entityId
-     * @param array  $criteria
+     * @param array $criteria
      *
      * @return array
      */
     public function pluck($name = 'name', $entityId = 'id', $criteria = [])
     {
-        return $this->model->where($criteria)->pluck($name, $entityId)->toArray();
+        return $this->filter($criteria)->pluck($name, $entityId)->toArray();
     }
 
     /**
@@ -239,20 +247,40 @@ abstract class AbstractRepository implements ContractInterface
      */
     public function find($entityId = 0, $columns = ['*'])
     {
-        return $this->model->with($this->with)->find($entityId, $columns);
+        if ($this->allowCaching) {
+            if (isset($this->cache[$entityId]))
+                return $this->cache[$entityId];
+        }
+
+        $entity = $this->model->with($this->with)->find($entityId, $columns);
+
+        if ($this->allowCaching)
+            $this->cache[$entityId] = $entity;
+
+        return $entity;
     }
 
     /**
      * @param $entityId
      * @param array $columns
      *
-     *@throws ModelNotFoundException
-     *
      * @return Entity|Model
+     * @throws ModelNotFoundException
+     *
      */
     public function findOrFail($entityId = 0, $columns = ['*'])
     {
-        return $this->model->with($this->with)->findOrFail($entityId, $columns);
+        if ($this->allowCaching) {
+            if (isset($this->cache[$entityId]))
+                return $this->cache[$entityId];
+        }
+
+        $entity = $this->model->with($this->with)->findOrFail($entityId, $columns);
+
+        if ($this->allowCaching)
+            $this->cache[$entityId] = $entity;
+
+        return $entity;
     }
 
     /**
@@ -263,7 +291,38 @@ abstract class AbstractRepository implements ContractInterface
      */
     public function first($filter = [], $columns = ['*'])
     {
-        return $this->model->with($this->with)->select($columns)->where($filter)->first();
+        if ($this->allowCaching) {
+            if (isset($this->cache['first']))
+                return $this->cache['first'];
+        }
+
+        $entity = $this->filter($filter)->with($this->with)->select($columns)->first();
+
+        if ($this->allowCaching)
+            $this->cache['first'] = $entity;
+
+        return $entity;
+    }
+
+    /**
+     * @param array $filter
+     * @param array $columns
+     *
+     * @return Entity|Model
+     */
+    public function last($filter = [], $columns = ['*'])
+    {
+        if ($this->allowCaching) {
+            if (isset($this->cache['last']))
+                return $this->cache['last'];
+        }
+
+        $entity = $this->filter($filter)->with($this->with)->select($columns)->orderBy('id', 'desc')->first();
+
+        if ($this->allowCaching)
+            $this->cache['last'] = $entity;
+
+        return $entity;
     }
 
     /**
@@ -335,7 +394,7 @@ abstract class AbstractRepository implements ContractInterface
      */
     public function restore($entityId = 0)
     {
-        /** @var Entity $entity */
+        /** @var Entity|null $entity */
         $entity = $this->model->withTrashed()
             ->whereId($entityId)
             ->first();
@@ -353,7 +412,7 @@ abstract class AbstractRepository implements ContractInterface
      */
     public function forceDelete($entityId = 0)
     {
-        /** @var Entity $entity */
+        /** @var Entity|null $entity */
         $entity = $this->model->withTrashed()
             ->whereId($entityId)
             ->first();
@@ -374,5 +433,17 @@ abstract class AbstractRepository implements ContractInterface
     {
         $this->trash = false;
         $this->withTrash = true;
+    }
+
+    public function disableCaching()
+    {
+        $this->allowCaching = false;
+        return $this;
+    }
+
+    public function allowCaching()
+    {
+        $this->allowCaching = true;
+        return $this;
     }
 }

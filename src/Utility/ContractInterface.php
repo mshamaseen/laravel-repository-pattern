@@ -21,13 +21,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 interface ContractInterface
 {
     /**
-     * @param array $columns
-     *
-     * @return Collection|static[]
-     */
-    public function all($columns = ['*']);
-
-    /**
      * @param array $data
      *
      * @return bool
@@ -95,10 +88,11 @@ interface ContractInterface
 
     /**
      * @param array $criteria
+     * @param array $columns
      *
      * @return LengthAwarePaginator
      */
-    public function get($criteria = []);
+    public function get($criteria = [],$columns = []);
 
     /**
      * @param string $name

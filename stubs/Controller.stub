@@ -3,8 +3,10 @@
 namespace App\{{folder}}{{path}};
 
 use App\Http\Requests{{path}}\{{modelName}}Request;
+use App\Http\Resources{{path}}\{{modelName}}Resource;
 use App\{{interfaceBaseFolderName}}{{path}}\{{modelName}}Interface;
-use Shamaseen\Repository\Generator\Utility\Controller;
+use {{base}};
+
 /**
  * Class {{modelName}}Controller
  * @package App\Http\Controllers{{path}}
@@ -13,7 +15,7 @@ use Shamaseen\Repository\Generator\Utility\Controller;
 class {{modelName}}Controller extends Controller
 {
 
-    protected $routeIndex = '{{lcPluralModelName}}.index';
+    protected $routeIndex = '{{lcPluralModelName}}';
 
     protected $pageTitle = '{{modelName}}';
     protected $createRoute = '{{lcPluralModelName}}.create';
@@ -27,10 +29,11 @@ class {{modelName}}Controller extends Controller
      * {{modelName}}Controller constructor.
      * @param {{modelName}}Interface $interface
      * @param {{modelName}}Request $request
+     * @param {{modelName}}Resource $resource
      */
     public function __construct({{modelName}}Interface $interface, {{modelName}}Request $request)
     {
-        parent::__construct($interface, $request);
+        parent::__construct($interface, $request, new  {{modelName}}Resource([]));
     }
 
     /**

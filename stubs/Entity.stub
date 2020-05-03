@@ -2,7 +2,8 @@
 
 namespace App\{{folder}}{{path}};
 
-use Shamaseen\Repository\Generator\Utility\Entity;
+use {{base}};
+
 /**
  * Class {{modelName}}
  * @package App\{{folder}}

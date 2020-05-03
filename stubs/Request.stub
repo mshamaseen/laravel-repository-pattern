@@ -2,7 +2,8 @@
 
 namespace App\{{folder}}{{path}};
 
-use Shamaseen\Repository\Generator\Utility\Request;
+use {{base}};
+
 /**
  * Class {{modelName}}Request
  * @package App\Http\Requests{{path}}

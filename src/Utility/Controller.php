@@ -11,9 +11,10 @@ namespace Shamaseen\Repository\Generator\Utility;
 use App;
 use Config;
 use Exception;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Response;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
 use Redirect;
 use View;
@@ -21,7 +22,7 @@ use View;
 /**
  * Class BaseController.
  */
-class Controller extends \App\Http\Controllers\Controller
+class Controller extends App\Http\Controllers\Controller
 {
     /**
      * @var ContractInterface
@@ -52,28 +53,33 @@ class Controller extends \App\Http\Controllers\Controller
      * @var Request
      */
     protected $request;
+    /**
+     * @var JsonResource
+     */
+    private $resource;
 
     /**
      * BaseController constructor.
      *
      * @param ContractInterface $interface
-     * @param Request           $request
+     * @param Request $request
+     * @param JsonResource $resource
      */
-    public function __construct(ContractInterface $interface, Request $request)
+    public function __construct(ContractInterface $interface, Request $request, JsonResource $resource = null)
     {
         $this->menu = new Collection();
         $this->breadcrumbs = new Collection();
 
         $language = $request->header('Language', 'en');
-        if (! in_array($language, Config::get('app.locales', []))) {
+        if (!in_array($language, Config::get('app.locales', []))) {
             $language = 'en';
         }
         $limit = $request->get('limit', 10);
 
-        if ((bool) $request->get('with-trash', false)) {
+        if ((bool)$request->get('with-trash', false)) {
             $interface->withTrash();
         }
-        if ((bool) $request->get('only-trash', false)) {
+        if ((bool)$request->get('only-trash', false)) {
             $interface->trash();
         }
 
@@ -111,15 +117,20 @@ class Controller extends \App\Http\Controllers\Controller
         $this->interface = $interface;
         $this->isAPI = $request->expectsJson();
 
-        if (! $this->isAPI) {
+        if (!$this->isAPI) {
             $this->breadcrumbs = new Collection();
             $this->search = new Collection();
-            View::share('pageTitle', $this->pageTitle.' | '.Config::get('app.name'));
+            View::share('pageTitle', $this->pageTitle . ' | ' . Config::get('app.name'));
             View::share('breadcrumbs', $this->breadcrumbs);
             View::share('menu', $this->menu);
             View::share('search', $this->search);
             View::share('selectedMenu', $this->selectedMenu);
         }
+        $this->resource = $resource;
+        if (is_null($resource)) {
+            $this->resource = new JsonResource([]);
+        }
+
         $this->request = $request;
     }
 
@@ -127,14 +138,14 @@ class Controller extends \App\Http\Controllers\Controller
      * Display a listing of the resource.
      *
      *
-     * @return Response
+     * @return Factory|JsonResponse|\Illuminate\View\View
      */
     public function index()
     {
         $data = $this->interface->simplePaginate($this->limit, $this->request->all());
 
-        if (! $this->isAPI) {
-            View::share('pageTitle', 'List '.$this->pageTitle.' | '.Config::get('app.name'));
+        if (!$this->isAPI) {
+            View::share('pageTitle', 'List ' . $this->pageTitle . ' | ' . Config::get('app.name'));
             $this->breadcrumbs->put('index', [
                 'link' => $this->routeIndex,
                 'text' => $this->pageTitle,
@@ -146,25 +157,33 @@ class Controller extends \App\Http\Controllers\Controller
                 ->with('filters', $this->request->all());
         }
 
+        $resource = $this->resource::collection($data);
         if ($data->hasMorePages()) {
-            return response()->json($data, JsonResponse::HTTP_PARTIAL_CONTENT);
-        }
-        if ($data->isEmpty()) {
-            return response()->json($data, JsonResponse::HTTP_REQUESTED_RANGE_NOT_SATISFIABLE);
+            $custom = collect(['code' => JsonResponse::HTTP_PARTIAL_CONTENT, 'message' => __('repository-generator.partial_content')]);
+            $resource = $custom->merge(['data' => $resource]);
+            return response()->json($resource, JsonResponse::HTTP_PARTIAL_CONTENT);
         }
 
-        return response()->json($data, JsonResponse::HTTP_OK);
+        if ($data->isEmpty()) {
+            $custom = collect(['code' => JsonResponse::HTTP_REQUESTED_RANGE_NOT_SATISFIABLE, 'message' => __('repository-generator.no_content')]);
+            $resource = $custom->merge(['data' => $resource]);
+            return response()->json($resource, JsonResponse::HTTP_REQUESTED_RANGE_NOT_SATISFIABLE);
+        }
+
+        $custom = collect(['code' => JsonResponse::HTTP_OK, 'message' => __('repository-generator.success')]);
+        $resource = $custom->merge(['data' => $resource]);
+        return response()->json($resource, JsonResponse::HTTP_OK);
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return Response
+     * @return Factory|JsonResponse|\Illuminate\View\View
      */
     public function create()
     {
-        if (! $this->isAPI) {
-            View::share('pageTitle', 'Create '.$this->pageTitle.' | '.Config::get('app.name'));
+        if (!$this->isAPI) {
+            View::share('pageTitle', 'Create ' . $this->pageTitle . ' | ' . Config::get('app.name'));
             $this->breadcrumbs->put('create', [
                 'link' => $this->createRoute,
                 'text' => trans('repository-generator.create'),
@@ -173,7 +192,14 @@ class Controller extends \App\Http\Controllers\Controller
             return view($this->viewCreate, $this->params);
         }
 
-        return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
+        return response()->json(
+            [
+                'status' => true,
+                'message' => __('repository-generator.no_content'),
+                'data' => []
+            ],
+            JsonResponse::HTTP_NO_CONTENT
+        );
     }
 
     /**
@@ -193,16 +219,16 @@ class Controller extends \App\Http\Controllers\Controller
      *
      * @param int $entityId
      *
-     * @return RedirectResponse|Response
+     * @return Factory|JsonResponse|RedirectResponse|\Illuminate\View\View
      */
     public function show($entityId)
     {
         $entity = $this->interface->find($entityId);
-        if (! $this->isAPI) {
-            if (! $entity) {
+        if (!$this->isAPI) {
+            if (!$entity) {
                 return Redirect::to($this->routeIndex)->with('warning', __('repository-generator.not_found'));
             }
-            View::share('pageTitle', 'View '.$this->pageTitle.' | '.Config::get('app.name'));
+            View::share('pageTitle', 'View ' . $this->pageTitle . ' | ' . Config::get('app.name'));
             $this->breadcrumbs->put('view', [
                 'link' => '',
                 'text' => __('repository-generator.show'),
@@ -211,12 +237,24 @@ class Controller extends \App\Http\Controllers\Controller
             return view($this->viewShow, $this->params)
                 ->with('entity', $entity);
         }
-        if (! $entity) {
-            return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
-        }
 
+        if (!$entity) {
+            return response()->json(
+                [
+                    'status' => false,
+                    'message' => __('repository-generator.not_found'),
+                    'data' => []
+                ],
+                JsonResponse::HTTP_NOT_FOUND
+            );
+        }
+        $resource = new $this->resource($entity);
         return response()->json(
-            ['status' => true, 'message' => __('repository-generator.success'), 'data' => $entity],
+            [
+                'status' => true,
+                'message' => __('repository-generator.success'),
+                'data' => $resource
+            ],
             JsonResponse::HTTP_OK
         );
     }
@@ -226,13 +264,13 @@ class Controller extends \App\Http\Controllers\Controller
      *
      * @param int $entityId
      *
-     * @return RedirectResponse|Response
+     * @return Factory|JsonResponse|RedirectResponse|\Illuminate\View\View
      */
     public function edit($entityId)
     {
         $entity = $this->interface->find($entityId);
-        if (! $this->isAPI) {
-            if (! $entity) {
+        if (!$this->isAPI) {
+            if (!$entity) {
                 return Redirect::to($this->routeIndex)->with('warning', __('repository-generator.not_found'));
             }
             $this->breadcrumbs->put('edit', [
@@ -244,7 +282,14 @@ class Controller extends \App\Http\Controllers\Controller
                 ->with('entity', $entity);
         }
 
-        return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
+        return response()->json(
+            [
+                'status' => false,
+                'message' => __('repository-generator.not_found'),
+                'data' => []
+            ],
+            JsonResponse::HTTP_NOT_FOUND
+        );
     }
 
     /**
@@ -266,9 +311,9 @@ class Controller extends \App\Http\Controllers\Controller
      *
      * @param int $entityId
      *
+     * @return RedirectResponse
      * @throws Exception
      *
-     * @return RedirectResponse
      */
     public function destroy($entityId)
     {
@@ -309,13 +354,13 @@ class Controller extends \App\Http\Controllers\Controller
      * Make response for web or json.
      *
      * @param mixed $entity
-     * @param bool  $appendEntity
+     * @param bool $appendEntity
      *
-     * @return RedirectResponse
+     * @return JsonResponse|RedirectResponse
      */
     public function makeResponse($entity, $appendEntity = false)
     {
-        if (! $this->isAPI) {
+        if (!$this->isAPI) {
             if ($entity) {
                 return Redirect::to($this->routeIndex)->with('message', __('repository-generator.success'));
             }
@@ -330,18 +375,43 @@ class Controller extends \App\Http\Controllers\Controller
         if ($entity) {
             if ($appendEntity) {
                 return response()->json(
-                    ['status' => true, 'message' => __('repository-generator.success'), 'data' => $entity],
+                    [
+                        'status' => true,
+                        'message' => __('repository-generator.success'),
+                        'data' => new JsonResource($entity)
+                    ],
                     JsonResponse::HTTP_OK
                 );
             }
 
-            return response()->json(null, JsonResponse::HTTP_NO_CONTENT);
+            return response()->json(
+                [
+                    'status' => false,
+                    'message' => __('repository-generator.no_content'),
+                    'data' => []
+                ],
+                JsonResponse::HTTP_NO_CONTENT
+            );
         }
 
         if (null === $entity) {
-            return response()->json(null, JsonResponse::HTTP_NOT_FOUND);
+            return response()->json(
+                [
+                    'status' => false,
+                    'message' => __('repository-generator.not_found'),
+                    'data' => []
+                ],
+                JsonResponse::HTTP_NOT_FOUND
+            );
         }
 
-        return response()->json(null, JsonResponse::HTTP_NOT_MODIFIED);
+        return response()->json(
+            [
+                'status' => false,
+                'message' => __('repository-generator.not_modified'),
+                'data' => []
+            ],
+            JsonResponse::HTTP_NOT_MODIFIED
+        );
     }
 }
