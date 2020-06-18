@@ -116,7 +116,7 @@ class Generator extends Command
         $apiFileContent = str_replace($webContent, '', file_get_contents($apiFile));
 
         File::put($webFile, $webFileContent);
-        File::put($webFile, $apiFileContent);
+        File::put($apiFile, $apiFileContent);
         File::append($webFile, $webContent);
         File::append($apiFile, $webContent);
 
