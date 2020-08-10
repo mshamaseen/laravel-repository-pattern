@@ -140,7 +140,7 @@ class Generator extends Command
             $createHtml = $this->FormGenerator->generateForm($entity);
             $editHtml = $this->FormGenerator->generateForm($entity, 'put');
         } else {
-            $message = "There is no entity for {$this->repoName}, 
+            $message = "There is no entity for {$this->repoName},
                         do you want to continue (this will disable form generator) ?";
             if (!$this->confirm($message)) {
                 echo 'Dispatch ..';
@@ -152,13 +152,12 @@ class Generator extends Command
         $languagePath = Config::get('repository.lang_path');
 
         foreach (Config::get('repository.languages') as $lang) {
-            $this->generate($repositoryName, "{$languagePath}{$lang}", 'lang');
+            $this->generate($repositoryName, $languagePath, $lang,'lang');
         }
-
-        $this->generate($repositoryName, $viewsPath, 'create', $createHtml);
-        $this->generate($repositoryName, $viewsPath, 'edit', $editHtml);
-        $this->generate($repositoryName, $viewsPath, 'index');
-        $this->generate($repositoryName, $viewsPath, 'show');
+        $this->generate($repositoryName, $viewsPath, $repositoryName, 'create',$createHtml);
+        $this->generate($repositoryName, $viewsPath, $repositoryName, 'edit', $editHtml);
+        $this->generate($repositoryName, $viewsPath, $repositoryName,'index');
+        $this->generate($repositoryName, $viewsPath, $repositoryName,'show');
     }
 
     /**
@@ -233,11 +232,12 @@ class Generator extends Command
                 Str::plural(Config::get('repository.interface', 'Interface')),
                 $form,
             ],
-            $this->getStub($type)
+            $content
         );
 
         $folder = str_replace('\\', '/', $folder);
         $path = str_replace('\\', '/', $path);
+
         $this->type($type, $folder, $path, $template);
 
         return true;
@@ -289,12 +289,12 @@ class Generator extends Command
             case 'edit':
             case 'index':
             case 'show':
-                $filePath = $this->getFolderOrCreate($folder . '/' . Str::plural($path)) . '/';
+                $filePath = $this->getFolderOrCreate($path . '/' . Str::plural($folder)) . '/';
                 $repoName = lcfirst($type);
                 $content = $filePath . $repoName . '.blade.php';
                 break;
             default:
-                $filePath = $this->getFolderOrCreate($folder) . '/';
+                $filePath = $this->getFolderOrCreate("{$path}{$folder}") . '/';
                 $repoName = lcfirst($this->repoName);
                 $content = $filePath . $repoName . '.php';
         }
@@ -315,4 +315,3 @@ class Generator extends Command
         shell_exec('composer dump-autoload');
     }
 }
-
