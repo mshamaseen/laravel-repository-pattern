@@ -154,6 +154,7 @@ class Generator extends Command
         foreach (Config::get('repository.languages') as $lang) {
             $this->generate($repositoryName, $languagePath, $lang,'lang');
         }
+
         $this->generate($repositoryName, $viewsPath, $repositoryName, 'create',$createHtml);
         $this->generate($repositoryName, $viewsPath, $repositoryName, 'edit', $editHtml);
         $this->generate($repositoryName, $viewsPath, $repositoryName,'index');
