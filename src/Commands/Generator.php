@@ -90,7 +90,7 @@ class Generator extends Command
         $request = Config::get('repository.requests_folder', 'Http\Requests');
         $resource = Config::get('repository.resources_folder', 'Http\Resources');
 
-        $base="Shamaseen\Repository\Generator\Utility";
+        $base = "Shamaseen\Repository\Generator\Utility";
         $modelBase = Config::get('repository.base_model', "{$base}\Entity");
         $interfaceBase = Config::get('repository.base_interface', "{$base}\ContractInterface");
         $repositoryBase = Config::get('repository.base_repository', "{$base}\AbstractRepository");
@@ -98,12 +98,12 @@ class Generator extends Command
         $requestBase = Config::get('repository.base_request', "{$base}\Request");
         $resourceBase = Config::get('repository.base_resource', "{$base}\JsonResource");
 
-        $this->generate($controllerBase, $path, $controller, 'Controller');
-        $this->generate($resourceBase, $path, $resource, 'Resource');
-        $this->generate($modelBase, $path, $model, 'Entity');
-        $this->generate($requestBase, $path, $request, 'Request');
-        $this->generate($interfaceBase, $path, $interface, 'Interface');
-        $this->generate($repositoryBase, $path, $repository, 'Repository');
+        $this->generate($path, $controller, 'Controller', $controllerBase);
+        $this->generate($path, $resource, 'Resource', $resourceBase);
+        $this->generate($path, $model, 'Entity', $modelBase);
+        $this->generate($path, $request, 'Request', $requestBase);
+        $this->generate($path, $interface, 'Interface', $interfaceBase);
+        $this->generate($path, $repository, 'Repository', $repositoryBase);
 
         $webFile = Config::get('repository.route_path') . '/web.php';
         $apiFile = Config::get('repository.route_path') . '/api.php';
@@ -193,15 +193,15 @@ class Generator extends Command
     }
 
     /**
-     * @param $base
      * @param string $path Class path
      * @param string $folder default path to generate in
      * @param string $type define which kind of files should generate
      * @param string $form
+     * @param string $base
      *
      * @return bool
      */
-    protected function generate($base, $path, $folder, $type, $form = '')
+    protected function generate($path, $folder, $type, $form = '', $base = '')
     {
         $path = $path ? '\\' . $path : '';
         $content = $this->getStub($type);
@@ -233,7 +233,7 @@ class Generator extends Command
                 Str::plural(Config::get('repository.interface', 'Interface')),
                 $form,
             ],
-            $this->getStub($type)
+            $content
         );
 
         $folder = str_replace('\\', '/', $folder);
