@@ -102,7 +102,7 @@ class Remover extends Command
                 $fileName = "{$this->repoName}{$type}.php";
         }
         if (!is_file($filePath . $fileName)) {
-            $this->warn($filePath . ' is not a valid file');
+            $this->warn($filePath . $fileName . ' is not a valid file');
             return false;
         }
 

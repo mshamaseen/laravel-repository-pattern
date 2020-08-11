@@ -42,7 +42,6 @@ class Generator extends Command
      *
      * @var string
      */
-    protected $repoNamespace;
     private $FormGenerator;
 
     /**
@@ -98,12 +97,12 @@ class Generator extends Command
         $requestBase = Config::get('repository.base_request', "{$base}\Request");
         $resourceBase = Config::get('repository.base_resource', "{$base}\JsonResource");
 
-        $this->generate($path, $controller, 'Controller', $controllerBase);
-        $this->generate($path, $resource, 'Resource', $resourceBase);
-        $this->generate($path, $model, 'Entity', $modelBase);
-        $this->generate($path, $request, 'Request', $requestBase);
-        $this->generate($path, $interface, 'Interface', $interfaceBase);
-        $this->generate($path, $repository, 'Repository', $repositoryBase);
+        $this->generate($path, $controller, 'Controller','', $controllerBase);
+        $this->generate($path, $resource, 'Resource', '',$resourceBase);
+        $this->generate($path, $model, 'Entity', '',$modelBase);
+        $this->generate($path, $request, 'Request', '',$requestBase);
+        $this->generate($path, $interface, 'Interface','', $interfaceBase);
+        $this->generate($path, $repository, 'Repository', '',$repositoryBase);
 
         $webFile = Config::get('repository.route_path') . '/web.php';
         $apiFile = Config::get('repository.route_path') . '/api.php';
@@ -265,7 +264,6 @@ class Generator extends Command
      * @param string $type define which kind of files should generate
      * @param string $template temple file
      *
-     * @return bool
      */
     private function type($type, $folder, $path, $template)
     {
@@ -303,7 +301,7 @@ class Generator extends Command
             // Ask to replace exiting file
             if (!$this->confirm("This file, {$content} already exit, do you want to replace?")) {
                 $this->line('File Not Replaced');
-                return false;
+                return;
             }
         }
 
