@@ -60,8 +60,18 @@ class RepositoryServiceProvider extends ServiceProvider
 
                 $contractName = str_replace('/', '\\', ucfirst($contract));
 
-                $repositoryClass = str_replace($interfaces, $repositories, $contractName);
-                $repositoryClass = str_replace([$interface, 'Interface'], $repository, $repositoryClass);
+                //replace only first occurance
+                $pos = strpos($contractName, $interfaces);
+                if ($pos !== false) {
+                    $repositoryClass = substr_replace($contractName, $repositories, $pos, strlen($interfaces));
+                }
+
+                //replace only last occurance
+                $pos = strrpos($repositoryClass, $interface);
+                if ($pos !== false) {
+                    $repositoryClass = substr_replace($repositoryClass, $repository, $pos, strlen($interface));
+                }
+
                 $this->providers[] = $contractName;
                 $this->bindings[$contractName] = $repositoryClass;
 
