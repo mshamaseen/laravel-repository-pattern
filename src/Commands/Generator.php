@@ -104,20 +104,18 @@ class Generator extends Command
         $this->generate($path, $interface, 'Interface','', $interfaceBase);
         $this->generate($path, $repository, 'Repository', '',$repositoryBase);
 
-        $webFile = Config::get('repository.route_path') . '/web.php';
-        $apiFile = Config::get('repository.route_path') . '/api.php';
-        $pluralName = strtolower(Str::plural($this->repoName));
-        $controllerPath = $path . '\\' . $this->repoName . 'Controller';
-
-        $webContent = "\nRoute::resource('{$pluralName}', '{$controllerPath}');";
-
-        $webFileContent = str_replace($webContent, '', file_get_contents($webFile));
-        $apiFileContent = str_replace($webContent, '', file_get_contents($apiFile));
-
-        File::put($webFile, $webFileContent);
-        File::put($apiFile, $apiFileContent);
-        File::append($webFile, $webContent);
-        File::append($apiFile, $webContent);
+     //append routes is not desired anymore
+//        $webFile = Config::get('repository.route_path') . '/web.php';
+//        $apiFile = Config::get('repository.route_path') . '/api.php';
+//        $pluralName = strtolower(Str::plural($this->repoName));
+//        $controllerPath = $path . '\\' . $this->repoName . 'Controller';
+//        $webContent = "\nRoute::resource('{$pluralName}', '{$controllerPath}');";
+//        $webFileContent = str_replace($webContent, '', file_get_contents($webFile));
+//        $apiFileContent = str_replace($webContent, '', file_get_contents($apiFile));
+//        File::put($webFile, $webFileContent);
+//        File::put($apiFile, $apiFileContent);
+//        File::append($webFile, $webContent);
+//        File::append($apiFile, $webContent);
 
         $this->dumpAutoload();
 
