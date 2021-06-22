@@ -1,15 +1,15 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: shanmaseen
+ * User: shamaseen
  * Date: 09/04/19
  * Time: 12:02 م.
  */
 
 namespace Shamaseen\Repository\Generator\Forms;
 
-use Config;
 use Doctrine\DBAL\Schema\Column;
+use Illuminate\Support\Facades\Config;
 
 abstract class Forms
 {
@@ -25,14 +25,14 @@ abstract class Forms
      *
      * @param Column $column
      */
-    public function __construct($column)
+    public function __construct(Column $column)
     {
         $this->column = $column;
     }
 
     abstract public function template();
 
-    public function getType()
+    public function getType(): string
     {
         switch ($this->column->getName()) {
             case 'email':

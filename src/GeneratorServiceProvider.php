@@ -36,9 +36,8 @@ class GeneratorServiceProvider extends ServiceProvider
         $stubPath = realpath(__DIR__.'/../stubs');
         $langPath = Config::get('repository.lang_path').'/en';
 
-        if(!is_dir($resourcesPathStub))
-        {
-            mkdir($resourcesPathStub,0777,true);
+        if (!is_dir($resourcesPathStub)) {
+            mkdir($resourcesPathStub, 0777, true);
         }
 
         $this->publishes([

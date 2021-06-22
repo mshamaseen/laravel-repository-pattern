@@ -60,13 +60,14 @@ class RepositoryServiceProvider extends ServiceProvider
 
                 $contractName = str_replace('/', '\\', ucfirst($contract));
 
-                //replace only first occurance
+                //replace only first occurrence
                 $pos = strpos($contractName, $interfaces);
+                $repositoryClass = '';
                 if ($pos !== false) {
                     $repositoryClass = substr_replace($contractName, $repositories, $pos, strlen($interfaces));
                 }
 
-                //replace only last occurance
+                //replace only last occurrence
                 $pos = strrpos($repositoryClass, $interface);
                 if ($pos !== false) {
                     $repositoryClass = substr_replace($repositoryClass, $repository, $pos, strlen($interface));
@@ -75,7 +76,10 @@ class RepositoryServiceProvider extends ServiceProvider
                 $this->providers[] = $contractName;
                 $this->bindings[$contractName] = $repositoryClass;
 
-                if (interface_exists($contractName) && in_array(ContractInterface::class, class_implements($contractName))) {
+                if (
+                    interface_exists($contractName) &&
+                    in_array(ContractInterface::class, class_implements($contractName))
+                ) {
                     $this->providers[] = $contractName;
                     $this->bindings[$contractName] = $repositoryClass;
                 }
@@ -102,7 +106,7 @@ class RepositoryServiceProvider extends ServiceProvider
      *
      * @return array
      */
-    public function provides()
+    public function provides(): array
     {
         return $this->providers;
     }

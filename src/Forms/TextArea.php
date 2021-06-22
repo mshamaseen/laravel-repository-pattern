@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: Mohammad Shanmaseen
+ * User: Mohammad Shamaseen
  * Date: 09/04/19
  * Time: 12:02 م.
  */
@@ -14,7 +14,7 @@ class TextArea extends Forms
     {
         $required = $this->column->getNotnull() ? 'required' : '';
 
-        $template = str_replace(
+        return str_replace(
             [
                 '{{columnName}}',
                 '{{type}}',
@@ -29,7 +29,5 @@ class TextArea extends Forms
             ],
             $this->getFormStub('textArea')
         );
-
-        return $template;
     }
 }

@@ -1,14 +1,14 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: shanmaseen
+ * User: Shamaseen
  * Date: 10/08/19
  * Time: 04:48 م
  */
 
 namespace Shamaseen\Repository\Generator\Commands;
 
-
+use FilesystemIterator;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
@@ -82,15 +82,15 @@ class Remover extends Command
         return true;
     }
 
-    public function remove($type, $folder, $relativePath)
+    public function remove($type, $folder, $relativePath): bool
     {
         $folder = str_replace('\\', '/', $folder);
         $relativePath = str_replace('\\', '/', $relativePath);
 
         switch ($type) {
             case 'Entity':
-                $filePath = Config::get('repository.app_path') . "/{$folder}/{$relativePath}/";
-                $fileName = "{$this->repoName}.php";
+                $filePath = Config::get('repository.app_path') . "/$folder/$relativePath/";
+                $fileName = "$this->repoName.php";
                 break;
             case 'Controller':
             case 'Request':
@@ -98,8 +98,8 @@ class Remover extends Command
             case 'Repository':
             case 'Interface':
             default:
-                $filePath = Config::get('repository.app_path') . "/{$folder}/{$relativePath}/";
-                $fileName = "{$this->repoName}{$type}.php";
+                $filePath = Config::get('repository.app_path') . "/$folder/$relativePath/";
+                $fileName = "$this->repoName$type.php";
         }
         if (!is_file($filePath . $fileName)) {
             $this->warn($filePath . $fileName . ' is not a valid file');
@@ -107,7 +107,7 @@ class Remover extends Command
         }
 
         unlink($filePath . $fileName);
-        if (!(new \FilesystemIterator($filePath))->valid()) {
+        if (!(new FilesystemIterator($filePath))->valid()) {
             rmdir($filePath);
         }
         return true;

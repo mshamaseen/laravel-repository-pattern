@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: Mohammad Shanmaseen
+ * User: Mohammad Shamaseen
  * Date: 09/04/19
  * Time: 02:44 م.
  */
@@ -22,7 +22,7 @@ class FormGenerator
      *
      * @return string
      */
-    public function generateFormInput($column)
+    public function generateFormInput(Column $column): string
     {
         $fileInput = $this->getFormInputClass($column);
 
@@ -34,9 +34,11 @@ class FormGenerator
      *
      * @return Input|TextArea
      */
-    public function getFormInputClass($column)
+    public function getFormInputClass(Column $column)
     {
         switch ($column->getType()->getName()) {
+            case 'text':
+                return new TextArea($column);
             case 'integer':
             case 'int':
             case 'mediumint':
@@ -44,20 +46,14 @@ class FormGenerator
             case 'decimal':
             case 'float':
             case 'double':
-                return new Input($column);
             case 'enum':
-                return new Input($column);
             case 'date':
             case 'datetime':
             case 'timestamp':
             case 'time':
-            case 'year':
-                return new Input($column);
-            case 'text':
-                return new TextArea($column);
-            case 'boolean':
             case 'bool':
-                return new Input($column);
+            case 'year':
+            case 'boolean':
             case 'varchat':
             default:
                 return new Input($column);
@@ -70,10 +66,10 @@ class FormGenerator
      *
      * @return string
      */
-    public function generateForm($entity, $method = 'post')
+    public function generateForm(Model $entity, string $method = 'post'): string
     {
         $html = '<form method="post" action="#">
-           <input type="hidden" name="__method" value="'.$method.'">';
+           <input type="hidden" name="__method" value="' . $method . '">';
         $html .= $this->getInputs($entity);
         $html .= '</form>';
 
@@ -85,9 +81,9 @@ class FormGenerator
      *
      * @return array
      */
-    public function getFillables($entity)
+    public function getFillables(Model $entity): array
     {
-        if (! empty($entity->getFillable())) {
+        if (!empty($entity->getFillable())) {
             return $entity->getFillable();
         }
 
@@ -107,7 +103,7 @@ class FormGenerator
      *
      * @return string
      */
-    public function getInputs($entity)
+    public function getInputs(Model $entity): string
     {
         if ($this->inputs) {
             return $this->inputs;
@@ -121,7 +117,7 @@ class FormGenerator
      *
      * @return string
      */
-    public function generateInputs($entity)
+    public function generateInputs(Model $entity): string
     {
         $html = '';
         foreach ($this->getFillables($entity) as $fillable) {

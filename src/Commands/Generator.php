@@ -2,10 +2,9 @@
 
 namespace Shamaseen\Repository\Generator\Commands;
 
-use Config;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionException;
@@ -40,7 +39,7 @@ class Generator extends Command
     /**
      * The repository name space.
      *
-     * @var string
+     * @var FormGenerator
      */
     private $FormGenerator;
 
@@ -80,7 +79,7 @@ class Generator extends Command
         return $this->makeRepositoryPatternFiles($path);
     }
 
-    public function makeRepositoryPatternFiles($path)
+    public function makeRepositoryPatternFiles($path): bool
     {
         $model = Str::plural(Config::get('repository.model', 'Entity'));
         $interface = Str::plural(Config::get('repository.interface', 'Interface'));
@@ -90,32 +89,19 @@ class Generator extends Command
         $resource = Config::get('repository.resources_folder', 'Http\Resources');
 
         $base = "Shamaseen\Repository\Generator\Utility";
-        $modelBase = Config::get('repository.base_model', "{$base}\Entity");
-        $interfaceBase = Config::get('repository.base_interface', "{$base}\ContractInterface");
-        $repositoryBase = Config::get('repository.base_repository', "{$base}\AbstractRepository");
-        $controllerBase = Config::get('repository.base_controller', "{$base}\Controller");
-        $requestBase = Config::get('repository.base_request', "{$base}\Request");
-        $resourceBase = Config::get('repository.base_resource', "{$base}\JsonResource");
+        $modelBase = Config::get('repository.base_model', "$base\Entity");
+        $interfaceBase = Config::get('repository.base_interface', "$base\ContractInterface");
+        $repositoryBase = Config::get('repository.base_repository', "$base\AbstractRepository");
+        $controllerBase = Config::get('repository.base_controller', "$base\Controller");
+        $requestBase = Config::get('repository.base_request', "$base\Request");
+        $resourceBase = Config::get('repository.base_resource', "$base\JsonResource");
 
-        $this->generate($path, $controller, 'Controller','', $controllerBase);
-        $this->generate($path, $resource, 'Resource', '',$resourceBase);
-        $this->generate($path, $model, 'Entity', '',$modelBase);
-        $this->generate($path, $request, 'Request', '',$requestBase);
-        $this->generate($path, $interface, 'Interface','', $interfaceBase);
-        $this->generate($path, $repository, 'Repository', '',$repositoryBase);
-
-     //append routes is not desired anymore
-//        $webFile = Config::get('repository.route_path') . '/web.php';
-//        $apiFile = Config::get('repository.route_path') . '/api.php';
-//        $pluralName = strtolower(Str::plural($this->repoName));
-//        $controllerPath = $path . '\\' . $this->repoName . 'Controller';
-//        $webContent = "\nRoute::resource('{$pluralName}', '{$controllerPath}');";
-//        $webFileContent = str_replace($webContent, '', file_get_contents($webFile));
-//        $apiFileContent = str_replace($webContent, '', file_get_contents($apiFile));
-//        File::put($webFile, $webFileContent);
-//        File::put($apiFile, $apiFileContent);
-//        File::append($webFile, $webContent);
-//        File::append($apiFile, $webContent);
+        $this->generate($path, $controller, 'Controller', '', $controllerBase);
+        $this->generate($path, $resource, 'Resource', '', $resourceBase);
+        $this->generate($path, $model, 'Entity', '', $modelBase);
+        $this->generate($path, $request, 'Request', '', $requestBase);
+        $this->generate($path, $interface, 'Interface', '', $interfaceBase);
+        $this->generate($path, $repository, 'Repository', '', $repositoryBase);
 
         $this->dumpAutoload();
 
@@ -137,7 +123,7 @@ class Generator extends Command
             $createHtml = $this->FormGenerator->generateForm($entity);
             $editHtml = $this->FormGenerator->generateForm($entity, 'put');
         } else {
-            $message = "There is no entity for {$this->repoName}, 
+            $message = "There is no entity for $this->repoName, 
                         do you want to continue (this will disable form generator) ?";
             if (!$this->confirm($message)) {
                 echo 'Dispatch ..';
@@ -149,7 +135,7 @@ class Generator extends Command
         $languagePath = Config::get('repository.lang_path');
 
         foreach (Config::get('repository.languages') as $lang) {
-            $this->generate($repositoryName, "{$languagePath}{$lang}", 'lang');
+            $this->generate($repositoryName, $languagePath . $lang, 'lang');
         }
 
         $this->generate($repositoryName, $viewsPath, 'create', $createHtml);
@@ -161,7 +147,7 @@ class Generator extends Command
     /**
      * @param $path
      *
-     * @return bool|Model|object
+     * @return bool|object
      * @throws ReflectionException
      *
      */
@@ -184,7 +170,7 @@ class Generator extends Command
      *
      * @return false|string
      */
-    protected function getStub($type)
+    protected function getStub(string $type)
     {
         return file_get_contents(Config::get('repository.stubs_path') . "/$type.stub");
     }
@@ -198,7 +184,7 @@ class Generator extends Command
      *
      * @return bool
      */
-    protected function generate($path, $folder, $type, $form = '', $base = '')
+    protected function generate(string $path, string $folder, string $type, string $form = '', string $base = ''): bool
     {
         $path = $path ? '\\' . $path : '';
         $content = $this->getStub($type);
@@ -247,7 +233,7 @@ class Generator extends Command
      *
      * @return string
      */
-    public function getFolderOrCreate($path)
+    public function getFolderOrCreate(string $path): string
     {
         if (!file_exists($path)) {
             mkdir($path, 0777, true);
@@ -263,13 +249,13 @@ class Generator extends Command
      * @param string $template temple file
      *
      */
-    private function type($type, $folder, $path, $template)
+    private function type(string $type, string $folder, string $path, string $template)
     {
         switch ($type) {
             case 'Entity':
-                $filePath = $this->getFolderOrCreate(Config::get('repository.app_path') . "/{$folder}/{$path}");
+                $filePath = $this->getFolderOrCreate(Config::get('repository.app_path') . "/$folder/$path");
                 $filePath = rtrim($filePath, '/');
-                $content = "{$filePath}/{$this->repoName}.php";
+                $content = "$filePath/$this->repoName.php";
 
                 break;
             case 'Controller':
@@ -277,9 +263,9 @@ class Generator extends Command
             case 'Request':
             case 'Repository':
             case 'Interface':
-                $filePath = $this->getFolderOrCreate(Config::get('repository.app_path') . "/{$folder}/{$path}");
+                $filePath = $this->getFolderOrCreate(Config::get('repository.app_path') . "/$folder/$path");
                 $filePath = rtrim($filePath, '/');
-                $content = "{$filePath}/{$this->repoName}{$type}.php";
+                $content = "$filePath/{$this->repoName}$type.php";
                 break;
             case 'create':
             case 'edit':
@@ -297,7 +283,7 @@ class Generator extends Command
 
         if (is_dir($filePath) && file_exists($content)) {
             // Ask to replace exiting file
-            if (!$this->confirm("This file, {$content} already exit, do you want to replace?")) {
+            if (!$this->confirm("This file, $content already exit, do you want to replace?")) {
                 $this->line('File Not Replaced');
                 return;
             }
@@ -306,9 +292,8 @@ class Generator extends Command
         file_put_contents($content, $template);
     }
 
-    function dumpAutoload()
+    private function dumpAutoload()
     {
         shell_exec('composer dump-autoload');
     }
 }
-

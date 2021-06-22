@@ -25,50 +25,50 @@ interface ContractInterface
      *
      * @return bool
      */
-    public function insert($data = []);
+    public function insert(array $data = []): bool;
 
     /**
      * @param array $data
-     * @param $entityId
+     * @param int $entityId
      *
      * @return Entity|Model|bool
      */
-    public function update($entityId, $data = []);
+    public function update(int $entityId, array $data = []);
 
     /**
-     * @param $entityId
-     *
-     * @throws Exception
+     * @param int $entityId
      *
      * @return bool
+     * @throws Exception
+     *
      */
-    public function delete($entityId);
+    public function delete(int $entityId = 0): bool;
 
     /**
-     * @param $entityId
+     * @param int $entityId
      * @param array $columns
      *
-     *  @return Entity|Model
+     * @return Model|null
      */
-    public function find($entityId, $columns = ['*']);
+    public function find(int $entityId = 0, array $columns = ['*']): ?Model;
 
     /**
-     * @param $entityId
+     * @param int $entityId
      * @param array $columns
      *
-     *@throws ModelNotFoundException
+     * @return Model|Collection|static|static[]
+     * @throws ModelNotFoundException
      *
-     * @return Entity|Model
      */
-    public function findOrFail($entityId = 0, $columns = ['*']);
+    public function findOrFail(int $entityId = 0, array $columns = ['*']);
 
     /**
      * @param array $criteria
      * @param array $columns
      *
-     *  @return Entity|Model
+     * @return Model|null|object
      */
-    public function findBy($criteria = [], $columns = ['*']);
+    public function findBy(array $criteria = [], array $columns = ['*']);
 
     /**
      * @param int   $limit
@@ -76,7 +76,7 @@ interface ContractInterface
      *
      * @return LengthAwarePaginator
      */
-    public function paginate($limit = 10, $criteria = []);
+    public function paginate(int $limit = 10, array $criteria = []): LengthAwarePaginator;
 
     /**
      * @param int   $limit
@@ -84,7 +84,7 @@ interface ContractInterface
      *
      * @return Paginator
      */
-    public function simplePaginate($limit = 10, $criteria = []);
+    public function simplePaginate(int $limit = 10, array $criteria = []): Paginator;
 
     /**
      * @param array $criteria
@@ -92,7 +92,7 @@ interface ContractInterface
      *
      * @return LengthAwarePaginator
      */
-    public function get($criteria = [],$columns = []);
+    public function get(array $criteria = [], array $columns = []): LengthAwarePaginator;
 
     /**
      * @param string $name
@@ -101,43 +101,51 @@ interface ContractInterface
      *
      * @return array
      */
-    public function pluck($name = 'name', $entityId = 'id', $criteria = []);
+    public function pluck(string $name = 'name', string $entityId = 'id', array $criteria = []): array;
 
     /**
      * @param array $filter
      * @param array $columns
      *
-     *  @return Entity|Model
+     * @return Model|null|object
      */
-    public function first($filter = [], $columns = ['*']);
+    public function first(array $filter = [], array $columns = ['*']);
+
+    /**
+     * @param array $filter
+     * @param array $columns
+     *
+     * @return Model|null|object
+     */
+    public function last(array $filter = [], array $columns = ['*']);
 
     /**
      * @param array $data
      *
      * @return Entity|Model
      */
-    public function create($data = []);
+    public function create(array $data = []);
+
+    /**
+     * @param array $data
+     *
+     * @return Model
+     */
+    public function createOrFirst(array $data = []): Model;
 
     /**
      * @param array $data
      *
      * @return Entity|Model
      */
-    public function createOrFirst($data = []);
-
-    /**
-     * @param array $data
-     *
-     * @return Entity|Model
-     */
-    public function createOrUpdate($data = []);
+    public function createOrUpdate(array $data = []);
 
     /**
      * Get entity name.
      *
      * @return string
      */
-    public function entityName();
+    public function entityName(): string;
 
     public function trash();
 
@@ -148,12 +156,12 @@ interface ContractInterface
      *
      * @return bool
      */
-    public function restore($entityId = 0);
+    public function restore(int $entityId = 0): bool;
 
     /**
-     * @param int $categoryId
+     * @param int $entityId
      *
      * @return bool
      */
-    public function forceDelete($categoryId = 0);
+    public function forceDelete(int $entityId = 0): bool;
 }

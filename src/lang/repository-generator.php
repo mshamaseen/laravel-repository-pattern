@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: Mohammad Shanmaseen
+ * User: Mohammad Shamaseen
  * Date: 10/04/19
  * Time: 01:48.
  */

@@ -63,7 +63,7 @@ class Controller extends App\Http\Controllers\Controller
      *
      * @param ContractInterface $interface
      * @param Request $request
-     * @param JsonResource $resource
+     * @param JsonResource|null $resource
      */
     public function __construct(ContractInterface $interface, Request $request, JsonResource $resource = null)
     {
@@ -76,10 +76,10 @@ class Controller extends App\Http\Controllers\Controller
         }
         $limit = $request->get('limit', 10);
 
-        if ((bool)$request->get('with-trash', false)) {
+        if ($request->get('with-trash', false)) {
             $interface->withTrash();
         }
-        if ((bool)$request->get('only-trash', false)) {
+        if ($request->get('only-trash', false)) {
             $interface->trash();
         }
 
@@ -159,13 +159,19 @@ class Controller extends App\Http\Controllers\Controller
 
         $resource = $this->resource::collection($data);
         if ($data->hasMorePages()) {
-            $custom = collect(['code' => JsonResponse::HTTP_PARTIAL_CONTENT, 'message' => __('repository-generator.partial_content')]);
+            $custom = collect([
+                'code' => JsonResponse::HTTP_PARTIAL_CONTENT,
+                'message' => __('repository-generator.partial_content')
+            ]);
             $resource = $custom->merge(['data' => $resource]);
             return response()->json($resource, JsonResponse::HTTP_PARTIAL_CONTENT);
         }
 
         if ($data->isEmpty()) {
-            $custom = collect(['code' => JsonResponse::HTTP_REQUESTED_RANGE_NOT_SATISFIABLE, 'message' => __('repository-generator.no_content')]);
+            $custom = collect([
+                'code' => JsonResponse::HTTP_REQUESTED_RANGE_NOT_SATISFIABLE,
+                'message' => __('repository-generator.no_content')
+            ]);
             $resource = $custom->merge(['data' => $resource]);
             return response()->json($resource, JsonResponse::HTTP_REQUESTED_RANGE_NOT_SATISFIABLE);
         }
@@ -221,7 +227,7 @@ class Controller extends App\Http\Controllers\Controller
      *
      * @return Factory|JsonResponse|RedirectResponse|\Illuminate\View\View
      */
-    public function show($entityId)
+    public function show(int $entityId)
     {
         $entity = $this->interface->find($entityId);
         if (!$this->isAPI) {
@@ -266,7 +272,7 @@ class Controller extends App\Http\Controllers\Controller
      *
      * @return Factory|JsonResponse|RedirectResponse|\Illuminate\View\View
      */
-    public function edit($entityId)
+    public function edit(int $entityId)
     {
         $entity = $this->interface->find($entityId);
         if (!$this->isAPI) {
@@ -299,7 +305,7 @@ class Controller extends App\Http\Controllers\Controller
      *
      * @return RedirectResponse
      */
-    public function update($entityId)
+    public function update(int $entityId)
     {
         $entity = $this->interface->update($entityId, $this->request->except(['_token', '_method']));
 
@@ -315,7 +321,7 @@ class Controller extends App\Http\Controllers\Controller
      * @throws Exception
      *
      */
-    public function destroy($entityId)
+    public function destroy(int $entityId)
     {
         $deleted = $this->interface->delete($entityId);
 
@@ -329,7 +335,7 @@ class Controller extends App\Http\Controllers\Controller
      *
      * @return RedirectResponse
      */
-    public function restore($entityId)
+    public function restore(int $entityId)
     {
         $entity = $this->interface->restore($entityId);
 
@@ -343,7 +349,7 @@ class Controller extends App\Http\Controllers\Controller
      *
      * @return RedirectResponse
      */
-    public function forceDelete($entityId)
+    public function forceDelete(int $entityId)
     {
         $entity = $this->interface->forceDelete($entityId);
 
@@ -358,7 +364,7 @@ class Controller extends App\Http\Controllers\Controller
      *
      * @return JsonResponse|RedirectResponse
      */
-    public function makeResponse($entity, $appendEntity = false)
+    public function makeResponse($entity, bool $appendEntity = false)
     {
         if (!$this->isAPI) {
             if ($entity) {

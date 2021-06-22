@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: Mohammad Shanmaseen
+ * User: Mohammad Shamaseen
  * Date: 09/10/18
  * Time: 01:01 م.
  */
@@ -14,6 +14,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
+use Response;
 
 /**
  * Class BaseRequests.
@@ -29,7 +30,7 @@ class Request extends FormRequest
     {
         if (false !== strpos($this->path(), 'api')) {
             $errors = (new ValidationException($validator))->errors();
-            throw new HttpResponseException(\Response::json(['success' => false, 'errors' => $errors,
+            throw new HttpResponseException(Response::json(['success' => false, 'errors' => $errors,
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
         }
         parent::failedValidation($validator);
