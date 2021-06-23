@@ -111,6 +111,7 @@ class Generator extends Command
     /**
      * @param $path
      *
+     * @return null
      * @throws ReflectionException
      */
     public function makeViewsAndLanguage($path)
@@ -127,7 +128,7 @@ class Generator extends Command
                         do you want to continue (this will disable form generator) ?";
             if (!$this->confirm($message)) {
                 echo 'Dispatch ..';
-                die;
+                return null;
             }
         }
         $repositoryName = lcfirst($this->repoName);
@@ -142,6 +143,7 @@ class Generator extends Command
         $this->generate($repositoryName, $viewsPath, 'edit', $editHtml);
         $this->generate($repositoryName, $viewsPath, 'index');
         $this->generate($repositoryName, $viewsPath, 'show');
+        return null;
     }
 
     /**

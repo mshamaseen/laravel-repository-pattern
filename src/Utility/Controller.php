@@ -8,21 +8,21 @@
 
 namespace Shamaseen\Repository\Generator\Utility;
 
-use App;
-use Config;
 use Exception;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
-use Redirect;
-use View;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\View;
 
 /**
  * Class BaseController.
  */
-class Controller extends App\Http\Controllers\Controller
+class Controller extends \App\Http\Controllers\Controller
 {
     /**
      * @var ContractInterface
@@ -211,7 +211,7 @@ class Controller extends App\Http\Controllers\Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return RedirectResponse|mixed
+     * @return JsonResponse|RedirectResponse
      */
     public function store()
     {
@@ -302,8 +302,7 @@ class Controller extends App\Http\Controllers\Controller
      * Update the specified resource in storage.
      *
      * @param int $entityId
-     *
-     * @return RedirectResponse
+     * @return JsonResponse|RedirectResponse
      */
     public function update(int $entityId)
     {
@@ -317,9 +316,8 @@ class Controller extends App\Http\Controllers\Controller
      *
      * @param int $entityId
      *
-     * @return RedirectResponse
+     * @return JsonResponse|RedirectResponse
      * @throws Exception
-     *
      */
     public function destroy(int $entityId)
     {
@@ -333,7 +331,7 @@ class Controller extends App\Http\Controllers\Controller
      *
      * @param int $entityId
      *
-     * @return RedirectResponse
+     * @return JsonResponse|RedirectResponse
      */
     public function restore(int $entityId)
     {

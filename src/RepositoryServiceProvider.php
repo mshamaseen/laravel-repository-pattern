@@ -55,33 +55,39 @@ class RepositoryServiceProvider extends ServiceProvider
             $iterator = new RecursiveIteratorIterator($directory);
             $regex = new RegexIterator($iterator, '/^.+\.php$/i', RecursiveRegexIterator::GET_MATCH);
             foreach ($regex as $name => $value) {
-                $contract = strstr($name, 'app/') ?: strstr($name, 'app\\');
-                $contract = rtrim($contract, '.php');
+                if ($name) {
 
-                $contractName = str_replace('/', '\\', ucfirst($contract));
+                    $contract = strstr($name, 'app/') ?: strstr($name, 'app\\');
+                    $contract = rtrim($contract, '.php');
 
-                //replace only first occurrence
-                $pos = strpos($contractName, $interfaces);
-                $repositoryClass = '';
-                if ($pos !== false) {
-                    $repositoryClass = substr_replace($contractName, $repositories, $pos, strlen($interfaces));
-                }
+                    $contractName = str_replace('/', '\\', ucfirst($contract));
 
-                //replace only last occurrence
-                $pos = strrpos($repositoryClass, $interface);
-                if ($pos !== false) {
-                    $repositoryClass = substr_replace($repositoryClass, $repository, $pos, strlen($interface));
-                }
+                    //replace only first occurrence
+                    $pos = strpos($contractName, $interfaces);
+                    $repositoryClass = '';
+                    if ($pos !== false) {
+                        $repositoryClass = substr_replace($contractName, $repositories, $pos, strlen($interfaces));
+                        if (is_array($repositoryClass)) {
+                            $repositoryClass = implode('', $repositoryClass);
+                        }
+                    }
 
-                $this->providers[] = $contractName;
-                $this->bindings[$contractName] = $repositoryClass;
+                    //replace only last occurrence
+                    $pos = strrpos($repositoryClass, $interface);
+                    if ($pos !== false) {
+                        $repositoryClass = substr_replace($repositoryClass, $repository, $pos, strlen($interface));
+                    }
 
-                if (
-                    interface_exists($contractName) &&
-                    in_array(ContractInterface::class, class_implements($contractName))
-                ) {
                     $this->providers[] = $contractName;
                     $this->bindings[$contractName] = $repositoryClass;
+
+                    if (
+                        interface_exists($contractName) &&
+                        in_array(ContractInterface::class, class_implements($contractName))
+                    ) {
+                        $this->providers[] = $contractName;
+                        $this->bindings[$contractName] = $repositoryClass;
+                    }
                 }
             }
         }

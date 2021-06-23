@@ -24,7 +24,10 @@
     "autoload": {
         "psr-4": {
             "Shamaseen\\Repository\\Generator\\": "src/"
-        }
+        },
+        "files": [
+            "vendor/laravel/framework/src/Illuminate/Foundation/helpers.php"
+        ]
     },
 
     "minimum-stability": "stable",
