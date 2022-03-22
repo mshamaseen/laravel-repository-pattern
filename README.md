@@ -3,6 +3,9 @@
 [![Build Status](https://scrutinizer-ci.com/g/mshamaseen/laravel-repository-pattern/badges/build.png?b=master)](https://scrutinizer-ci.com/g/mshamaseen/laravel-repository-pattern/build-status/master)
 [![Code Intelligence Status](https://scrutinizer-ci.com/g/mshamaseen/laravel-repository-pattern/badges/code-intelligence.svg?b=master)](https://scrutinizer-ci.com/code-intelligence)
 [![SymfonyInsight](https://insight.symfony.com/projects/f3edab7d-00b8-4633-96d3-a84e38b7ebec/mini.svg)](https://insight.symfony.com/projects/f3edab7d-00b8-4633-96d3-a84e38b7ebec)
+
+**IMPORTANT:** We have created this repository to be a part of a specific workflow, it wasn't designed to be compatible with every project, but it became popular, so we decided to create a new better one with flexibility in mind, use [this package](https://github.com/mshamaseen/laravel-repositories) instead.
+
 # Repository Generator
 Autogeneration for repository pattern files, This package is aim to generate Contract (interface), Entity (model), Controller, Repository, Request validation and view files for specified module.
 
